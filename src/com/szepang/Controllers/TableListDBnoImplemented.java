@@ -3,6 +3,7 @@ package com.szepang.Controllers;
 import Models.Table;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Sze on 14/08/2017.
@@ -25,7 +26,7 @@ public void printAllTables () {
     }
 }
 
-//@param int tNum, books the table number specified
+//@param tNum, books the table number specified
     public void bookT(int tNum) {
         boolean notFound = true;
         while (notFound) {
@@ -41,22 +42,36 @@ public void printAllTables () {
         }
     }
 
-//Return the table that matches the Seat Quantity
+// @param int number of people
+// Return the table that matches the Seat Quantity
+// Also checks that the table is Free to seat people
     public int tbMatchSeat (int numOfPeople) {
+    //TODO Consider if a client makes table called 0
     int tNum = 0;
+    int tableCollection = 0;
     boolean notFound = true;
-    while (notFound) {
+    while (notFound && tableCollection < tableList.size()) {
             for (Table t : tableList) {
                 int seats = t.getSeatQty();
-                        if(seats == numOfPeople){
+                        if(seats == numOfPeople && t.isFree()){
+                            //TODO chuck constraint code in here
                             tNum = t.getTableNumber();
                             notFound = false;
                         }
+                        tableCollection++;
             }
         }
         return tNum;
     }
 
+// FREE all tables
+    public void freeAllTables() {
+        for (Table t : tableList) {
+            t.setFree(true);
+            //TEST Check that the appropriate fields have changed
+            t.printTableProperty();
+            }
+    }
 
 
 

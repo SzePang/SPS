@@ -72,16 +72,50 @@ public class TableController {
     }
 
     //Processes the tableLookup form
+/*    @RequestMapping(value="/tableLookUp.html", method = RequestMethod.POST)
+    public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
+
+
+        //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
+        int theTableNum = tbl1.tbMatchSeat(pAmount);
+
+        //TODO write code to allow the user to specify the max seats the largest table can sit
+        if(theTableNum > 0) {
+            ModelAndView model = new ModelAndView("FoundSuccess");
+            model.addObject("result", theTableNum);
+            return model;
+        }
+        else {
+            ModelAndView model = new ModelAndView("GenericNoSuccess");
+            model.addObject("result",
+                    "Sorry, there are no available tables that can seat the amount of people in your party.");
+            return model;
+        }
+
+    }*/
+
     @RequestMapping(value="/tableLookUp.html", method = RequestMethod.POST)
     public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
 
 
+        //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
         int theTableNum = tbl1.tbMatchSeat(pAmount);
+        //TEST what is in theTableNum variable
+        System.out.println(theTableNum);
 
-        ModelAndView model = new ModelAndView("FoundSuccess");
-        model.addObject("result", theTableNum);
-        return model;
 
+        //TODO write code to allow the user to specify the max seats the largest table can sit
+        if(theTableNum == 0) {
+            ModelAndView model = new ModelAndView("GenericNoSuccess");
+            model.addObject("result1",
+                    "Sorry, there are no available tables that can seat the amount of people in your party.");
+            return model;
+        }
+        else {
+            ModelAndView model = new ModelAndView("FoundSuccess");
+            model.addObject("result", theTableNum);
+            return model;
+        }
     }
 
 
@@ -95,7 +129,18 @@ public class TableController {
         model.addObject("tBooked", theTableNum);
         return model;
 
+    }
 
+
+    //FREE all tables
+    @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
+    public ModelAndView freeAllTables() {
+
+        tbl1.freeAllTables();
+
+        ModelAndView model = new ModelAndView("GenericSuccess");
+        model.addObject("someResult1", "Freeing all tables");
+        return model;
     }
 
     //Book the table
