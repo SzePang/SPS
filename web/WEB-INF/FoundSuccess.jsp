@@ -23,6 +23,16 @@
     <a href="/findTable.html"/>Seat another customer</a>
 </p>
 
+<p>
+    <%--Takes the user to the ADD a table--%>
+    <a href="/addTable.html"/>Add Tables</a>
+</p>
+
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
 
 </body>
 </html>

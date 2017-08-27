@@ -1,6 +1,6 @@
 package com.szepang.Controllers;
 
-import Models.Table;
+import com.szepang.Models.TableEntity;
 
 import java.util.ArrayList;
 
@@ -10,17 +10,17 @@ import java.util.ArrayList;
 public class TableListDBnoImplemented {
 
     //Creates an ArrayList of tables to test code until DB is implemented.
- ArrayList<Table> tableList = new ArrayList<>();
+ ArrayList<TableEntity> tableList = new ArrayList<>();
 
     
 //@param Table, adds the table to the list
-public void addTableToList(Table theTable) {
+public void addTableToList(TableEntity theTable) {
     tableList.add(theTable);
 }
 
 //Prints all tables in list tableList
 public void printAllTables () {
-    for (Table t : tableList) {
+    for (TableEntity t : tableList) {
         System.out.println(t);
     }
 }
@@ -29,7 +29,7 @@ public void printAllTables () {
     public void bookT(int tNum) {
         boolean notFound = true;
         while (notFound) {
-            for (Table t : tableList) {
+            for (TableEntity t : tableList) {
                 int tt = t.getTableNumber();
                 if (tt == tNum) {
                     notFound = false;
@@ -50,7 +50,7 @@ public void printAllTables () {
     int tableCollection = 0;
     boolean notFound = true;
     while (notFound && tableCollection < tableList.size()) {
-            for (Table t : tableList) {
+            for (TableEntity t : tableList) {
                 int seats = t.getSeatQty();
                         if(seats == numOfPeople && t.isFree()){
                             //TODO chuck constraint code in here
@@ -65,7 +65,7 @@ public void printAllTables () {
 
 // FREE all tables
     public void freeAllTables() {
-        for (Table t : tableList) {
+        for (TableEntity t : tableList) {
             t.setFree(true);
             //TEST Check that the appropriate fields have changed
             t.printTableProperty();
@@ -74,13 +74,10 @@ public void printAllTables () {
 
 
 
-
-//TODO
-//Check if a certain boolean value exists in a field
-/*    public boolean yesOrNo (boolean theProperty) {
-    boolean yesOrNo = theProperty;
-    return yesOrNo;
-    }*/
+//DELETE ALL TABLES
+    public void deleteAllTables(){
+    tableList.removeAll(tableList);
+    }
 
 
 }

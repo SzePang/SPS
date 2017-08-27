@@ -12,7 +12,23 @@
 </head>
 <body>
 
+<h1>${msg}</h1>
 
+<form action="/deleteTheTable"  method="post">
+
+    <p>Table Number to DELETE : <input type="number" name= "theTable" />
+    </p>
+
+
+
+    <input type="submit" value="delete Table" />
+
+</form>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/deleteAllTables"/>delete all Tables</a>
+</p>
 
 </body>
 </html>

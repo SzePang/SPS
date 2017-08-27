@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="SeatingPlannerSystem:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/SeatingPlannerSystem_war</output-path>
+    <root id="archive" name="SeatingPlannerSystem_war.war">
+      <element id="artifact" artifact-name="SeatingPlannerSystem:war exploded" />
+    </root>
+  </artifact>
+</component>

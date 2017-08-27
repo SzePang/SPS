@@ -30,5 +30,7 @@
     <a href="/findTable.html"/>Seat a customer</a>
   </p>
 
+
+
   </body>
 </html>

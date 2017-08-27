@@ -1,35 +1,45 @@
-package Models;
+package com.szepang.Models;
 
-import com.szepang.Controllers.TableListDBnoImplemented;
+import javax.persistence.*;
 
 /**
  * Created by Sze on 12/07/2017.
+ * The persistence class for the Table database table.
  */
-public class Table {
+
+@Entity
+@Table(name = "tables")
+public class TableEntity {
 
     //FIELDS for Table class
-    private int tableNumber;
+    @Id
+    @Column(name="tableNumber")
+    private int tableNum;
     private int seatQty;
     private boolean free;
     //Table characteristic fields
     private boolean wall;
     private boolean window;
+    /*@Column(name="toilets")*/
     private boolean toilet;
     private boolean kitchen;
     private boolean walkway;
     private boolean bar;
     private boolean entrance;
 
+    //Empty constructor for hibernate
+    public TableEntity () {}
+
     //CONSTRUCTOR for Table objects. This constructor creates a new table.
     //Create a table specified by the parameters.
-    public Table(int tableNumber, int seatQty, boolean free, boolean wall, boolean window, boolean toilet,
+    public TableEntity(int tableNumber, int seatQty, boolean free, boolean wall, boolean window, boolean toilets,
                  boolean kitchen, boolean walkway, boolean bar, boolean entrance) {
-        this.tableNumber = tableNumber;
+        this.tableNum = tableNumber;
         this.seatQty = seatQty;
         this.free = free;
         this.wall = wall;
         this.window = window;
-        this.toilet = toilet;
+        this.toilet = toilets;
         this.kitchen = kitchen;
         this.walkway = walkway;
         this.bar = bar;
@@ -38,10 +48,10 @@ public class Table {
 
     //Table Number
     //@return the table number
-    public int getTableNumber() {return tableNumber;}
+    public int getTableNumber() {return tableNum;}
     //@param int set the table number
     public void setTableNumber(int tableNumber) {
-        this.tableNumber = tableNumber;
+        this.tableNum = tableNumber;
     }
 
     //SEAT
@@ -77,7 +87,7 @@ public class Table {
     //return boolean toilet
     public boolean isToilet() {return toilet;}
     //Set boolean toilet
-    public void setToilet(boolean toilet) {this.toilet = toilet;}
+    public void setToilet(boolean toilets) {this.toilet = toilets;}
 
     //Table near kitchen, return true if near kitchen
     //return boolean kitchen
@@ -106,7 +116,7 @@ public class Table {
     }
 
 public void printTableProperty() {
-        System.out.println(tableNumber);
+        System.out.println(tableNum);
         System.out.println(seatQty);
         System.out.println(free);
         System.out.println(wall);

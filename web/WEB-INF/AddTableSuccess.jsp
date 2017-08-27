@@ -73,9 +73,13 @@
 </p>
 
 <p>
-<%--returns the user to the SPS home page
-MUST EDIT THIIIIS--%>
-<a href="/admissionForm.html"/>Return to Home</a>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/findTable.html"/>Seat a customer</a>
 </p>
 
 </body>

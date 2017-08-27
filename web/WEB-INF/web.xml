@@ -5,8 +5,7 @@
          version="3.1">
 
 
-
-<!--Specifically telling servlet that once a url request is recieved,
+<!--Specifically telling servlet that once a url request is received,
     map that url request to front controller(called Dispatcher Servlet in Spring MVC framework)-->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
@@ -22,18 +21,12 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-<!--    //DATABASE DESCRIPTION-->
-<!--    <resource-ref>
-        <description>Reviews Database</description>
-        <res-ref-name>jdbc/yourdb</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>-->
-
     <resource-ref>
         <res-ref-name>jdbc/sqlite</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
     </resource-ref>
+
+
 
 
 </web-app>

@@ -30,7 +30,7 @@
         Check all the properties that are near the table: <br>
         Wall <input type="checkbox" name="wall" /> <br>
         Window <input type="checkbox" name="window" /> <br>
-        Toilets <input type="checkbox" name="toilet" /> <br>
+        Toilets <input type="checkbox" name="toilets" /> <br>
         Kitchen <input type="checkbox" name="kitchen" /> <br>
         Walkway <input type="checkbox" name="walkway" /> <br>
         Bar <input type="checkbox" name="bar" /> <br>

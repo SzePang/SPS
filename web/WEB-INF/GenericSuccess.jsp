@@ -14,5 +14,20 @@
 
 <h1>${someResult1} was completed successfully!</h1>
 
+<p>
+    <%--Takes the user to the ADD a table--%>
+    <a href="/addTable.html"/>Add Tables</a>
+</p>
+
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/findTable.html"/>Seat a customer</a>
+</p>
+
 </body>
 </html>
