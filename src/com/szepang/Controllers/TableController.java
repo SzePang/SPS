@@ -2,7 +2,7 @@ package com.szepang.Controllers;
 
 import com.szepang.Models.TableEntity;
 
-import com.szepang.database.DBinteraction;
+import com.szepang.database.DBInteraction;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,8 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TableController {
 
-    //CREATE ARRAY LIST OF TABLES WHEN TableController object is created
-    TableListDBnoImplemented tbl1 = new TableListDBnoImplemented();
 
     //Tells the dispatcher servlet to give the user the page to add a table
     @RequestMapping(value = "/addTable.html", method = RequestMethod.GET)
@@ -47,19 +45,14 @@ public class TableController {
         TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
         byKitchen, byWalkway, byBar, byEntrance);
 
-        //TEMPORARY: ADD THE CREATED TABLE TO THE ARRAY LIST OF TABLES - tabl1
-        tbl1.addTableToList(table1);
         //ADDS the table to the database
-        DBinteraction.addTable(table1);
+        DBInteraction.addTable(table1);
 
 
         //TODO check that the table number the user is trying to create does not yet exist in the DB/array list tbl1
 
         //TEST: Check that all fields are appropriately added
                 table1.printTableProperty();
-        //TEST: Check that the created table has been added to the array list
-                tbl1.printAllTables();
-
 
         ModelAndView model = new ModelAndView("/AddTableSuccess");
         model.addObject("headerMessage", "Successfully added table " +theTableNum );
@@ -82,12 +75,8 @@ public class TableController {
     @RequestMapping(value="/tableLookUp.html", method = RequestMethod.POST)
     public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
 
-
         //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
-        int theTableNum = tbl1.tbMatchSeat(pAmount);
-        //TEST what is in theTableNum variable
-        System.out.println(theTableNum);
-
+        int theTableNum = DBInteraction.tbMatchSeat(pAmount);
 
         //TODO write code to allow the user to specify the max seats the largest table can sit
         if(theTableNum == 0) {
@@ -108,7 +97,9 @@ public class TableController {
     @RequestMapping("/bookTable.html/{someID}")
     public ModelAndView bookTable(@PathVariable(value="someID") int theTableNum) {
 
-        tbl1.bookT(theTableNum);
+        DBInteraction dbInteract = new DBInteraction();
+
+        dbInteract.bookT(theTableNum);
 
         ModelAndView model = new ModelAndView("BookedSuccess");
         model.addObject("tBooked", theTableNum);
@@ -121,7 +112,7 @@ public class TableController {
     @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
     public ModelAndView freeAllTables() {
 
-        tbl1.freeAllTables();
+        DBInteraction.freeAllTables();
 
         ModelAndView model = new ModelAndView("GenericSuccess");
         model.addObject("someResult1", "Freeing all tables");
@@ -145,7 +136,8 @@ public class TableController {
     @RequestMapping(value = "/deleteTheTable", method = RequestMethod.POST)
     public ModelAndView deleteTableNum(@RequestParam("theTable") int theTable) {
 
-        DBinteraction.deleteTableNum(theTable);
+
+        DBInteraction.deleteTableNum(theTable);
 
         ModelAndView model = new ModelAndView("GenericSuccess");
         model.addObject("someResult1", "table " +theTable+ " is deleted");
@@ -156,14 +148,23 @@ public class TableController {
     @RequestMapping(value = "/deleteAllTables")
     public ModelAndView deleteAllTables() {
 
-        DBinteraction.deleteAllTables();
-        tbl1.deleteAllTables();
+        DBInteraction.deleteAllTables();
 
         ModelAndView model = new ModelAndView("GenericSuccess");
         model.addObject("someResult1", "All tables are deleted");
         return model;
     }
 
+    //TODO PRINT ALL tables
+    @RequestMapping(value = "/printAllTables")
+    public ModelAndView printAllTables() {
 
+        String toPrint = DBInteraction.getHtmlForAllTables();
+
+        ModelAndView model = new ModelAndView("DisplayTables");
+        model.addObject("someResult1", "All tables are deleted");
+        model.addObject("html", toPrint);
+        return model;
+    }
 
 }
