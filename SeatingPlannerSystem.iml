@@ -34,7 +34,7 @@
     <orderEntry type="library" exported="" scope="PROVIDED" name="Tomcat 8.5.161" level="application_server_libraries" />
     <orderEntry type="library" exported="" name="Spring-4.3.9.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Spring MVC-4.3.9.RELEASE" level="project" />
-    <orderEntry type="library" name="sqlite-jdbc-3.8.11.2" level="project" />
-    <orderEntry type="library" name="HibernateLibrary" level="project" />
+    <orderEntry type="library" exported="" name="sqlite-jdbc-3.8.11.2" level="project" />
+    <orderEntry type="library" exported="" name="HibernateLibrary" level="project" />
   </component>
 </module>

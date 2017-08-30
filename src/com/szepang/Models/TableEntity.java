@@ -1,5 +1,11 @@
 package com.szepang.Models;
 
+
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.core.style.ToStringCreator;
+import org.springframework.validation.annotation.Validated;
+
 import javax.persistence.*;
 
 /**
@@ -20,7 +26,6 @@ public class TableEntity {
     //Table characteristic fields
     private boolean wall;
     private boolean window;
-    /*@Column(name="toilets")*/
     private boolean toilet;
     private boolean kitchen;
     private boolean walkway;
@@ -128,7 +133,12 @@ public void printTableProperty() {
         System.out.println(entrance);
 }
 
-//@param int tableNum, Book the table by it's table number
+    @Override
+    public String toString() {
+        return "No. of Seats: " + seatQty;
+    }
+
+    //@param int tableNum, Book the table by it's table number
 public void bookTable() {
         setFree(false);
 }

@@ -30,6 +30,11 @@
     <a href="/findTable.html"/>Seat a customer</a>
   </p>
 
+  <p>
+    <%--Frees all tables--%>
+    <a href="/freeAllTables"/>Free all tables</a>
+  </p>
+
 
 
   </body>

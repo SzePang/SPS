@@ -23,5 +23,8 @@
     </bean>
 
 
+<!--    // NEW - tell Spring to automatically use HV to validate method calls of classes annotated with @Validated
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>-->
 
 </beans>

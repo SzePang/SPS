@@ -1,12 +1,15 @@
+/*
 package com.szepang.Controllers;
 
 import com.szepang.Models.TableEntity;
 
 import java.util.ArrayList;
 
+*/
 /**
  * Created by Sze on 14/08/2017.
- */
+ *//*
+
 public class TableListDBnoImplemented {
 
     //Creates an ArrayList of tables to test code until DB is implemented.
@@ -81,3 +84,4 @@ public void printAllTables () {
 
 
 }
+*/

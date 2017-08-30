@@ -97,9 +97,7 @@ public class TableController {
     @RequestMapping("/bookTable.html/{someID}")
     public ModelAndView bookTable(@PathVariable(value="someID") int theTableNum) {
 
-        DBInteraction dbInteract = new DBInteraction();
-
-        dbInteract.bookT(theTableNum);
+        DBInteraction.bookT(theTableNum);
 
         ModelAndView model = new ModelAndView("BookedSuccess");
         model.addObject("tBooked", theTableNum);
@@ -107,6 +105,17 @@ public class TableController {
 
     }
 
+
+    //Tells the dispatcher servlet to give the form to FREE tables
+    @RequestMapping(value="/freeATable", method = RequestMethod.GET)
+    public ModelAndView freeATable() {
+
+        ModelAndView model = new ModelAndView("FreeTable");
+        model.addObject("msg","Ensure that the table is cleaned and reset" +
+                " before marking this table as free!");
+
+        return model;
+    }
 
     //FREE all tables
     @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
@@ -116,6 +125,19 @@ public class TableController {
 
         ModelAndView model = new ModelAndView("GenericSuccess");
         model.addObject("someResult1", "Freeing all tables");
+        return model;
+    }
+
+    //FREE a single table by its table number
+    //TODO - What if a user free a negative int
+    @RequestMapping(value = "/freeTheTable", method = RequestMethod.POST)
+    public ModelAndView freeTableNum(@RequestParam("theTable") int theTable) {
+
+
+        DBInteraction.freeTheTable(theTable);
+
+        ModelAndView model = new ModelAndView("GenericSuccess");
+        model.addObject("someResult1", "table " +theTable+ " is free!");
         return model;
     }
 
@@ -132,7 +154,7 @@ public class TableController {
     }
 
 
-    //TODO DELETE a table
+    //TODO - What if a user delete a negative int
     @RequestMapping(value = "/deleteTheTable", method = RequestMethod.POST)
     public ModelAndView deleteTableNum(@RequestParam("theTable") int theTable) {
 
@@ -144,7 +166,7 @@ public class TableController {
         return model;
     }
 
-    //TODO DELETE ALL tables
+    //TODO - What if a user delete a negative int
     @RequestMapping(value = "/deleteAllTables")
     public ModelAndView deleteAllTables() {
 
@@ -165,6 +187,11 @@ public class TableController {
         model.addObject("someResult1", "All tables are deleted");
         model.addObject("html", toPrint);
         return model;
+
+
     }
 
+
+
+//End curly bracket of class
 }
