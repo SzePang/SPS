@@ -18,23 +18,23 @@
 
 <form action="/inputTable.html"  method="post">
 
-    <p>Table Number : <input type="number" name= "tableNumber" />
+    <p>Table Number : <input type="number" min="1" step="1" value="0" name= "tableNumber" />
     </p>
 
 
-    <p>Number of seats : <input type="number" name="seatQty" />
+    <p>Number of seats : <input type="number" min="1" max="99" step="1" value="0" name="seatQty" />
     </p>
 
     <p>
         Is the table currently available to use? <input type="checkbox" name="free" />  <br>
-        Check all the properties that are near the table: <br>
-        Wall <input type="checkbox" name="wall" /> <br>
-        Window <input type="checkbox" name="window" /> <br>
-        Toilets <input type="checkbox" name="toilets" /> <br>
-        Kitchen <input type="checkbox" name="kitchen" /> <br>
-        Walkway <input type="checkbox" name="walkway" /> <br>
-        Bar <input type="checkbox" name="bar" /> <br>
-        Entrance<input type="checkbox" name="entrance" />
+        Rank all the properties that are near the table from 1-10 (10 being the nearest, 1 being very distant: <br>
+        Wall <input type="number" min="1" max="10" step="1" value="1" name="wall" /> <br>
+        Window <input type="number" min="1" max="10" step="1" value="1" name="window" /> <br>
+        Toilets <input type="number" min="1" max="10" step="1" value="1" name="toilets" /> <br>
+        Kitchen <input type="number" min="1" max="10" step="1" value="1" name="kitchen" /> <br>
+        Walkway <input type="number" min="1" max="10" step="1" value="1" name="walkway" /> <br>
+        Bar <input type="number" min="1" max="10" step="1" value="1" name="bar" /> <br>
+        Entrance<input type="number" min="1" max="10" step="1" value="1" name="entrance" />
     </p>
 
 

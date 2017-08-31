@@ -24,21 +24,21 @@ public class TableEntity {
     private int seatQty;
     private boolean free;
     //Table characteristic fields
-    private boolean wall;
-    private boolean window;
-    private boolean toilet;
-    private boolean kitchen;
-    private boolean walkway;
-    private boolean bar;
-    private boolean entrance;
+    private int wall;
+    private int window;
+    private int toilet;
+    private int kitchen;
+    private int walkway;
+    private int bar;
+    private int entrance;
 
     //Empty constructor for hibernate
     public TableEntity () {}
 
     //CONSTRUCTOR for Table objects. This constructor creates a new table.
     //Create a table specified by the parameters.
-    public TableEntity(int tableNumber, int seatQty, boolean free, boolean wall, boolean window, boolean toilets,
-                 boolean kitchen, boolean walkway, boolean bar, boolean entrance) {
+    public TableEntity(int tableNumber, int seatQty, boolean free, int wall, int window, int toilets,
+                       int kitchen, int walkway, int bar, int entrance) {
         this.tableNum = tableNumber;
         this.seatQty = seatQty;
         this.free = free;
@@ -78,45 +78,45 @@ public class TableEntity {
 
     //Table near wall, return true if near wall
     //return boolean wall
-    public boolean isWall() {return wall;}
+    public int getWall() {return wall;}
     //Set boolean wall
-    public void setWall(boolean wall) {this.wall = wall;}
+    public void setWall(int wall) {this.wall = wall;}
 
     //Table near window, return true is near window
     //return boolean window
-    public boolean isWindow() {return window;}
+    public int getWindow() {return window;}
     //Set boolean window
-    public void setWindow(boolean window) {this.window = window;}
+    public void setWindow(int window) {this.window = window;}
 
     //Table near toilet, return true if near toilet
     //return boolean toilet
-    public boolean isToilet() {return toilet;}
+    public int getToilet() {return toilet;}
     //Set boolean toilet
-    public void setToilet(boolean toilets) {this.toilet = toilets;}
+    public void setToilet(int toilets) {this.toilet = toilets;}
 
     //Table near kitchen, return true if near kitchen
     //return boolean kitchen
-    public boolean isKitchen() {return kitchen;}
+    public int getKitchen() {return kitchen;}
     //Set boolean kitchen
-    public void setKitchen(boolean kitchen) {this.kitchen = kitchen;}
+    public void setKitchen(int kitchen) {this.kitchen = kitchen;}
 
     //Table near walkway, return true if near walkway
     //return boolean walkway
-    public boolean isWalkway() {return walkway;}
+    public int getWalkway() {return walkway;}
     //Set boolean walkway
-    public void setWalkway(boolean walkway) {this.walkway = walkway;}
+    public void setWalkway(int walkway) {this.walkway = walkway;}
 
     //Table near bar, return true if near bar
     //return boolean bar
-    public boolean isBar() {return bar;}
+    public int getBar() {return bar;}
     //Set boolean bar
-    public void setBar(boolean bar) {this.bar = bar;}
+    public void setBar(int bar) {this.bar = bar;}
 
     //Table near entrance, return true if near entrance
     //return boolean entrance
-    public boolean isEntrance() {return entrance;}
+    public int getEntrance() {return entrance;}
     //Set boolean entrance
-    public void setEntrance(boolean entrance) {
+    public void setEntrance(int entrance) {
         this.entrance = entrance;
     }
 

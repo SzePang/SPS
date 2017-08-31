@@ -1,5 +1,6 @@
 package com.szepang.Controllers;
 
+import com.szepang.Models.DisabilityConstraint;
 import com.szepang.Models.TableEntity;
 
 import com.szepang.database.DBInteraction;
@@ -31,13 +32,13 @@ public class TableController {
     public ModelAndView inputTable(@RequestParam("tableNumber") int theTableNum,
                                    @RequestParam("seatQty") int theSeatQty,
                                    @RequestParam(name="free",defaultValue="false") boolean isItfree,
-                                   @RequestParam(name="wall", defaultValue="false") boolean byWall,
-                                   @RequestParam(name="window", defaultValue="false") boolean byWindow,
-                                   @RequestParam(name="toilets", defaultValue="false") boolean byToilet,
-                                   @RequestParam(name="kitchen", defaultValue="false") boolean byKitchen,
-                                   @RequestParam(name="walkway", defaultValue="false") boolean byWalkway,
-                                   @RequestParam(name="bar", defaultValue="false") boolean byBar,
-                                   @RequestParam(name="entrance", defaultValue="false") boolean byEntrance) {
+                                   @RequestParam(name="wall", defaultValue="1") int byWall,
+                                   @RequestParam(name="window", defaultValue="1") int byWindow,
+                                   @RequestParam(name="toilets", defaultValue="1") int byToilet,
+                                   @RequestParam(name="kitchen", defaultValue="1") int byKitchen,
+                                   @RequestParam(name="walkway", defaultValue="1") int byWalkway,
+                                   @RequestParam(name="bar", defaultValue="1") int byBar,
+                                   @RequestParam(name="entrance", defaultValue="1") int byEntrance) {
 
 
         //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
@@ -76,7 +77,7 @@ public class TableController {
     public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
 
         //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
-        int theTableNum = DBInteraction.tbMatchSeat(pAmount);
+        int theTableNum = DBInteraction.tbMatchSeat(pAmount, new DisabilityConstraint());
 
         //TODO write code to allow the user to specify the max seats the largest table can sit
         if(theTableNum == 0) {
@@ -189,6 +190,20 @@ public class TableController {
         return model;
 
 
+    }
+
+    public static double similarity(int[] arr1, int[] arr2) {
+        int n = arr1.length;
+        double ab = 0.0;
+        double a2 = 0.0;
+        double b2 = 0.0;
+
+        for (int i = 0; i < n; i++) {
+            ab += arr1[i] * arr2[i];
+            a2 += arr1[i] * arr1[i];
+            b2 += arr2[i] * arr2[i];
+        }
+        return ab / (a2 + b2 - ab);
     }
 
 

@@ -3,6 +3,9 @@ package com.szepang.database;
 import java.util.List;
 import java.util.Properties;
 
+import com.szepang.Controllers.TableController;
+import com.szepang.Models.Constraint;
+import com.szepang.Models.DisabilityConstraint;
 import com.szepang.Models.TableEntity;
 import com.szepang.htmlviews.HtmlBuilder;
 import org.hibernate.HibernateException;
@@ -297,48 +300,100 @@ System.out.println("t-num: " + tTable.getTableNumber() );
     // Also checks that the table is Free to seat people
     //
 // TODO --------- MUST TEST - PASS
-    public static int tbMatchSeat (int numOfPeople) {
+//    public static int tbMatchSeat (int numOfPeople) {
+//
+//        // Configure the session factory
+//        configureSessionFactory();
+//        Session session = null;
+//
+//        int tNum = 0;
+//
+//        try {
+//            session = sessionFactory.openSession();
+//
+//            //TODO Consider if a client makes table called 0
+//            int tableCollection = 0;
+//            //GETS the number of entries in the table of Tables
+//            long tableEntries = (long) session.createQuery("select count(*) from  TableEntity ")
+//                    .uniqueResult();
+//
+//            List<TableEntity> tableEntityList = session.createQuery("from TableEntity").list();
+//
+//            boolean notFound = true;
+//
+//            while (notFound && tableCollection < tableEntries) {
+//
+//                for (TableEntity tTable : tableEntityList) {
+//                    int numSeats = tTable.getSeatQty();
+//                    if (numSeats == numOfPeople && tTable.isFree()) {
+//                        //TODO chuck constraint code in here
+//                        tNum = tTable.getTableNumber();
+//                        notFound = false;
+//                        break;
+//                    }
+//                    tableCollection++;
+//                }
+//            }
+//
+//            // Committing the change in the database.
+//            session.flush();
+//
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//
+//
+//
+//        } finally {
+//            if (session != null) {
+//                session.close();
+//            }
+//        }
+//        return tNum;
+//    }
+
+    public static int tbMatchSeat (int numOfPeople, Constraint constraint) {
 
         // Configure the session factory
         configureSessionFactory();
         Session session = null;
 
         int tNum = 0;
+        double previousSim = 0.0;
+//        Transaction tx = null;
 
         try {
             session = sessionFactory.openSession();
 
-            //TODO Consider if a client makes table called 0
-            int tableCollection = 0;
-            //GETS the number of entries in the table of Tables
-            long tableEntries = (long) session.createQuery("select count(*) from  TableEntity ")
-                    .uniqueResult();
+            //TODO Filter request to get tables that are free and can seat the quantity of people
+            List<TableEntity> tableEntityList = session.createQuery("from TableEntity as t where t.free =" +
+                    "true and t.seatQty >= :numOfPeople").setParameter("numOfPeople", numOfPeople).list();
 
-            List<TableEntity> tableEntityList = session.createQuery("from TableEntity").list();
+            int[] featuresConstraint = constraint.getCompareableArray();
 
-            boolean notFound = true;
-
-            while (notFound && tableCollection < tableEntries) {
 
                 for (TableEntity tTable : tableEntityList) {
-                    int numSeats = tTable.getSeatQty();
-                    if (numSeats == numOfPeople && tTable.isFree()) {
-                        //TODO chuck constraint code in here
+                    int[] featuresTable = constraint.getCompareableArray(tTable);
+                    double tableSimularity = TableController.similarity(featuresConstraint, featuresTable);
+                    System.out.println("Table " + tTable.getTableNumber() + " = " + tableSimularity);
+
+                    if(previousSim < tableSimularity){
+                        previousSim = tableSimularity;
                         tNum = tTable.getTableNumber();
-                        notFound = false;
-                        break;
                     }
-                    tableCollection++;
-                }
+
             }
+
 
             // Committing the change in the database.
             session.flush();
+//            tx.commit();
 
         } catch (Exception ex) {
             ex.printStackTrace();
 
-
+            // Rolling back the changes to make the data consistent in case of any failure
+            // in between multiple database write operations.
+//            tx.rollback();
 
         } finally {
             if (session != null) {
@@ -474,6 +529,7 @@ System.out.println("t-num: " + tTable.getTableNumber() );
             // Rolling back the changes to make the data consistent in case of any failure
             // in between multiple database write operations.
             tx.rollback();
+
         } finally{
             if(session != null) {
                 session.close();
