@@ -1,6 +1,6 @@
 package com.szepang.Controllers;
 
-import com.szepang.Models.DisabilityConstraint;
+import com.szepang.PeoplePriorities.DisabilityPriorities;
 import com.szepang.Models.TableEntity;
 
 import com.szepang.database.DBInteraction;
@@ -77,7 +77,7 @@ public class TableController {
     public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
 
         //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
-        int theTableNum = DBInteraction.tbMatchSeat(pAmount, new DisabilityConstraint());
+        int theTableNum = DBInteraction.tbMatchSeat(pAmount, new DisabilityPriorities());
 
         //TODO write code to allow the user to specify the max seats the largest table can sit
         if(theTableNum == 0) {
@@ -92,6 +92,8 @@ public class TableController {
             return model;
         }
     }
+
+    @RequestMapping(value = "/tableForDisabled"), meth
 
 
 

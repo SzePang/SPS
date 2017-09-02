@@ -21,29 +21,20 @@
         Number of people : <input type="number" name="numPeople" />
     </p>
 
+ <%--   <p>
+        Any children (Age below 8) : <input type="checkbox" name="children" />
+    </p>
 
+    <p>
+        Any customers with disabilities? : <input type="checkbox" name="disabled" />
+    </p>
 
-        <input type="submit" value="Find a Table" />
+    <p>
+        Any elders (Age 70+) : <input type="checkbox" name="elders" />
+
+        <input type="submit" value="Find a Table" />--%>
 
     </form>
-<%--
-PLACEHOLDER CODE
-    <p>
-        How many people (Age 8+) : <input type="number" name="seatQty" />
-    </p>
-
-    <p>
-        How many children (Age below 8) : <input type="number" name="children" />
-    </p>
-
-    <p>
-        Any customers with disabilities? : <input type="boolean" name="disabled" />
-    </p>
-
-    <p>
-        Any elders> : <input type="boolean" name="elders" />
-    </p>--%>
-
 
 
 

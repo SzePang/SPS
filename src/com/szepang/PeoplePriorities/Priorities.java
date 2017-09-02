@@ -1,9 +1,11 @@
-package com.szepang.Models;
+package com.szepang.PeoplePriorities;
+
+import com.szepang.Models.TableEntity;
 
 /**
  * Created by Sze on 30/08/2017.
  */
-public class Constraint {
+public class Priorities {
 
     public int wallRank;
     public int windowRank;
@@ -41,7 +43,7 @@ public class Constraint {
         return entranceRank;
     }
 
-    public int[] getCompareableArray(){
+    public int[] getComparableArray(){
         return null;
     }
 
@@ -49,7 +51,7 @@ public class Constraint {
      * @param entity Takes a parameter of TableEntity
      * @return getComparableArray return the array of fields we want to compare from the table entry.
      */
-    public int[] getCompareableArray(TableEntity entity){
+    public int[] getComparableArray(TableEntity entity){
         return null;
     }
 }

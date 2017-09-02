@@ -1,29 +1,31 @@
-package com.szepang.Models;
+package com.szepang.PeoplePriorities;
+
+import com.szepang.Models.TableEntity;
 
 /**
  * Created by Sze on 30/08/2017.
  */
-public final class DisabilityConstraint extends Constraint{
+public final class DisabilityPriorities extends Priorities {
 
-    //Disability constraint favours tables near toilets and walkway for easy accessibility
+    //Disability favours tables near toilets and walkway for easy accessibility
     //and near the entrance/exit for easier emergency evacuation.
     //tables near walls or kitchen are unfavourable.
-    //The properties  assigned with int ranks, 1 being the highest preference.
+    //The properties assigned with int ranks, 1 being lowest priority and 10 being the highest priority.
 
-
-    public DisabilityConstraint() {
+    //Disability priorities for all fields, 0 means it does not matter.
+    public DisabilityPriorities() {
         this.wallRank = 0;
-        this.windowRank = 10;
-        this.toiletRank = 1;
-        this.kitchenRank = 7;
-        this.walkwayRank = 1;
-        this.barRank = 7;
-        this.entranceRank = 1;
+        this.windowRank = 1;
+        this.toiletRank = 9;
+        this.kitchenRank = 1;
+        this.walkwayRank = 10;
+        this.barRank = 5;
+        this.entranceRank = 10;
     }
 
-    //Give only fields we care about with the disability constraint
+    //Give only fields we care about with the disability priorities
     @Override
-    public int[] getCompareableArray(){
+    public int[] getComparableArray(){
         int[] arr = new int[6];
         arr[0] = getBarRank();
         arr[1] = getEntranceRank();
@@ -40,7 +42,7 @@ public final class DisabilityConstraint extends Constraint{
      * @return getComparableArray return the array of fields we want to compare from the table entry.
      */
     @Override
-    public int[] getCompareableArray(TableEntity entity){
+    public int[] getComparableArray(TableEntity entity){
         int[] temp = new int[6];
         temp[0] = entity.getBar();
         temp[1] = entity.getEntrance();
