@@ -15,33 +15,25 @@
 <h1>Find a suitable table</h1>
 
 <%--FORM to search for a table--%>
-<form action="/tableLookUp.html"  method="post">
+<form action="/findPriority"  method="post">
 
     <p>
         Number of people : <input type="number" name="numPeople" />
     </p>
 
- <%--   <p>
-        Any children (Age below 8) : <input type="checkbox" name="children" />
-    </p>
+    <p>Check if any of the following apply to the party:</p>
 
-    <p>
-        Any customers with disabilities? : <input type="checkbox" name="disabled" />
-    </p>
+    <p>Children (Age below 8) : <input type="checkbox" name="priorities" value="child"/>
 
-    <p>
-        Any elders (Age 70+) : <input type="checkbox" name="elders" />
+    <p>Elders (Age 70+) : <input type="checkbox" name="priorities" value="elder"/>
 
-        <input type="submit" value="Find a Table" />--%>
+    <p>Pregnant : <input type="checkbox" name="priorities" value="pregnant"/>
+
+    <p>Disabilities : <input type="checkbox" name="priorities" value="disabled"/>
+
+    <p> <input type="submit" value="Find a Table" /> </p>
 
     </form>
-
-
-
-    <input type="submit" value="Find a Table" />
-
-
-</form>
 
 </body>
 </html>

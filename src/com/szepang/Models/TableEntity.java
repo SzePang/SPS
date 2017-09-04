@@ -120,7 +120,8 @@ public class TableEntity {
         this.entrance = entrance;
     }
 
-public void printTableProperty() {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public void printTableProperty() {
         System.out.println(tableNum);
         System.out.println(seatQty);
         System.out.println(free);
@@ -133,13 +134,15 @@ public void printTableProperty() {
         System.out.println(entrance);
 }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public String toString() {
         return "No. of Seats: " + seatQty;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //@param int tableNum, Book the table by it's table number
-public void bookTable() {
+    public void bookTable() {
         setFree(false);
 }
 

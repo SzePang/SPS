@@ -1,6 +1,6 @@
 package com.szepang.Controllers;
 
-import com.szepang.PeoplePriorities.DisabilityPriorities;
+import com.szepang.PeoplePriorities.*;
 import com.szepang.Models.TableEntity;
 
 import com.szepang.database.DBInteraction;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.*;
 
 
 /**
@@ -27,42 +28,138 @@ public class TableController {
         return model;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //The processing of the form, from /addTable.html
     @RequestMapping(value = "/inputTable.html", method = RequestMethod.POST)
     public ModelAndView inputTable(@RequestParam("tableNumber") int theTableNum,
                                    @RequestParam("seatQty") int theSeatQty,
-                                   @RequestParam(name="free",defaultValue="false") boolean isItfree,
-                                   @RequestParam(name="wall", defaultValue="1") int byWall,
-                                   @RequestParam(name="window", defaultValue="1") int byWindow,
-                                   @RequestParam(name="toilets", defaultValue="1") int byToilet,
-                                   @RequestParam(name="kitchen", defaultValue="1") int byKitchen,
-                                   @RequestParam(name="walkway", defaultValue="1") int byWalkway,
-                                   @RequestParam(name="bar", defaultValue="1") int byBar,
-                                   @RequestParam(name="entrance", defaultValue="1") int byEntrance) {
-
+                                   @RequestParam(name = "free", defaultValue = "false") boolean isItfree,
+                                   @RequestParam(name = "wall", defaultValue = "1") int byWall,
+                                   @RequestParam(name = "window", defaultValue = "1") int byWindow,
+                                   @RequestParam(name = "toilets", defaultValue = "1") int byToilet,
+                                   @RequestParam(name = "kitchen", defaultValue = "1") int byKitchen,
+                                   @RequestParam(name = "walkway", defaultValue = "1") int byWalkway,
+                                   @RequestParam(name = "bar", defaultValue = "1") int byBar,
+                                   @RequestParam(name = "entrance", defaultValue = "1") int byEntrance) {
 
         //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
-
         TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
-        byKitchen, byWalkway, byBar, byEntrance);
+                byKitchen, byWalkway, byBar, byEntrance);
 
         //ADDS the table to the database
         DBInteraction.addTable(table1);
 
-
         //TODO check that the table number the user is trying to create does not yet exist in the DB/array list tbl1
-
         //TEST: Check that all fields are appropriately added
-                table1.printTableProperty();
+        table1.printTableProperty();
 
         ModelAndView model = new ModelAndView("/AddTableSuccess");
-        model.addObject("headerMessage", "Successfully added table " +theTableNum );
+        model.addObject("headerMessage", "Successfully added table " + theTableNum);
         model.addObject("table1", table1);
 
         return model;
-
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Map<Integer, Integer> tableMap = new HashMap<>();
+
+    /*Method that filters the form to determine the people priorities and then call the correct method to
+    process the request*/
+    @RequestMapping(value = "/findPriority", method = RequestMethod.POST)
+    public ModelAndView findPriorityTable(@RequestParam("numPeople") int numOfPeople,
+                                  @RequestParam(value = "priorities", required = false) String[] priorityList) {
+
+        //Check that there is a table that can sit the number of people first
+        int tNum = 0;
+        tNum = DBInteraction.tbMatchSeat(numOfPeople);
+        //If no table exists, DBInteraction will return 0
+        if (tNum == 0) {
+            ModelAndView model = new ModelAndView("GenericNoSuccess");
+            model.addObject("result1",
+                    "Sorry, there are no available tables that can seat the amount of people in your party.");
+            return model;
+        }
+        //If a table exists to sit the party, perform person priorities checks
+        else {
+            //Check if priorityList contains any string of person priorities
+            if (priorityList == null || priorityList.length == 0) {
+                NoPriority noPriority = new NoPriority();
+                List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
+
+                double score = 0.0;
+                for (TableEntity tTable : suitableTableList) {
+                    double tableSimalarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
+                    if (score < tableSimalarity) {
+                        score = tableSimalarity;
+                        tNum = tTable.getTableNumber();
+                    }
+                }
+
+            } else {
+                //Priorities must have been selected there perform the following block of code
+                //List of suitable tables returned from DBInteration
+                List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
+
+                //Get required priority objects and but them in a list
+                List<Priorities> checkedPriorities = new ArrayList<>();
+                for (String checked : priorityList) {
+                    switch (checked) {
+                        case "disabled":
+                            checkedPriorities.add(new DisabilityPriorities());
+                            break;
+                        case "pregnant":
+                            checkedPriorities.add(new PregnantPriorities());
+                            break;
+                        case "elder":
+                            checkedPriorities.add(new ElderlyPriorities());
+                            break;
+                        case "child":
+                            checkedPriorities.add(new ChildPriorities());
+                            break;
+
+                    }
+                }
+
+                for (TableEntity tTable : suitableTableList) {
+                    int sum = 0;
+                    for (Priorities p : checkedPriorities) {
+                        sum += getDiffTotal(p.getComparableArray(), p.getComparableArray(tTable));
+                    }
+                    //Store the table number as the key and the sum as the value in a Map
+                    tableMap.put(tTable.getTableNumber(), sum);
+                }
+
+                //get the lowest scoring table
+                tNum = getBestTableNumberInMap(tableMap);
+                //DBInteraction.getTableEntity(bestTable);
+            }
+        }
+        ModelAndView model = new ModelAndView("FoundSuccess");
+        model.addObject("result", tNum);
+        return model;
+    }
+
+    /**
+     * @param tableMap
+     * @return the table number that scored the lowest,
+     * of the total difference of the Person Priorities against the Table Properties
+     */
+    int getBestTableNumberInMap(Map<Integer, Integer> tableMap) {
+        //Check that the Map is not empty
+        if(tableMap.isEmpty())
+            throw new IllegalStateException("Number of tables cannot be 0 in length");
+
+        int minValueInMap = (Collections.min(tableMap.values()));  // This will return SMALLEST value in the Hashmap
+        for (Map.Entry<Integer, Integer> entry : tableMap.entrySet()) {  // Iterate through hashmap
+            if (entry.getValue() == minValueInMap) {
+                return entry.getKey();     // return the key with min value, key being the table number
+            }
+        }
+        return 0; //shouldn't happen
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Tells the dispatcher servlet to give the form for the user to fill out to search for appropriate table
     @RequestMapping(value="/findTable", method = RequestMethod.GET)
     public ModelAndView findTable() {
@@ -73,13 +170,13 @@ public class TableController {
         return model;
     }
 
-    @RequestMapping(value="/tableLookUp.html", method = RequestMethod.POST)
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @RequestMapping(value="/lookupTable", method = RequestMethod.POST)
     public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
 
-        //Method tbMatchSeat, matches the user specified customers with the seats of tables in list.
-        int theTableNum = DBInteraction.tbMatchSeat(pAmount, new DisabilityPriorities());
+        //Method disabledMatchSeat, matches the user specified customers with the seats of tables in list.
+        int theTableNum = DBInteraction.disabledMatchSeat(pAmount, new DisabilityPriorities());
 
-        //TODO write code to allow the user to specify the max seats the largest table can sit
         if(theTableNum == 0) {
             ModelAndView model = new ModelAndView("GenericNoSuccess");
             model.addObject("result1",
@@ -93,10 +190,7 @@ public class TableController {
         }
     }
 
-    @RequestMapping(value = "/tableForDisabled"), meth
-
-
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @RequestMapping("/bookTable.html/{someID}")
     public ModelAndView bookTable(@PathVariable(value="someID") int theTableNum) {
 
@@ -108,7 +202,7 @@ public class TableController {
 
     }
 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Tells the dispatcher servlet to give the form to FREE tables
     @RequestMapping(value="/freeATable", method = RequestMethod.GET)
     public ModelAndView freeATable() {
@@ -120,6 +214,7 @@ public class TableController {
         return model;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //FREE all tables
     @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
     public ModelAndView freeAllTables() {
@@ -131,6 +226,7 @@ public class TableController {
         return model;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //FREE a single table by its table number
     //TODO - What if a user free a negative int
     @RequestMapping(value = "/freeTheTable", method = RequestMethod.POST)
@@ -144,7 +240,7 @@ public class TableController {
         return model;
     }
 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///deleteTable.html
     //Tells the dispatcher servlet to give the user the page to delete tables
     @RequestMapping(value="/deleteTable.html", method = RequestMethod.GET)
@@ -156,7 +252,7 @@ public class TableController {
         return model;
     }
 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //TODO - What if a user delete a negative int
     @RequestMapping(value = "/deleteTheTable", method = RequestMethod.POST)
     public ModelAndView deleteTableNum(@RequestParam("theTable") int theTable) {
@@ -169,6 +265,7 @@ public class TableController {
         return model;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //TODO - What if a user delete a negative int
     @RequestMapping(value = "/deleteAllTables")
     public ModelAndView deleteAllTables() {
@@ -180,6 +277,7 @@ public class TableController {
         return model;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //TODO PRINT ALL tables
     @RequestMapping(value = "/printAllTables")
     public ModelAndView printAllTables() {
@@ -194,6 +292,10 @@ public class TableController {
 
     }
 
+    //The following are static functions that TableController uses to perform calculations
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Tanimoto Coefficient based on equation from:
+    //http://mines.humanoriented.com/classes/2010/fall/csci568/portfolio_exports/mvoget/similarity/similarity.html
     public static double similarity(int[] arr1, int[] arr2) {
         int n = arr1.length;
         double ab = 0.0;
@@ -206,6 +308,22 @@ public class TableController {
             b2 += arr2[i] * arr2[i];
         }
         return ab / (a2 + b2 - ab);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Java Euclidean distance code - https://www.codeproject.com/Questions/480279/JavaplusEuclideanplusdistancepluscode
+    /**
+     * @param arr1 int array of the priority ranks
+     * @param arr2 int array of the table property
+     * @return score
+     */
+    public static double getDiffTotal(int[] arr1, int[] arr2){
+        int n = arr1.length;
+        double score = 0;
+        for(int i = 0; i < n; i++){
+            score = score + Math.pow((arr1[i] - arr2[i]),2);
+        }
+        return Math.sqrt(score);
     }
 
 

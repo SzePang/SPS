@@ -21,10 +21,11 @@ public class ChildPriorities extends Priorities{
         this.entranceRank = 5;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Give only fields we care about with child priorities
     @Override
     public int[] getComparableArray(){
-        int[] arr = new int[6];
+        int[] arr = new int[7];
         arr[0] = getBarRank();
         arr[1] = getEntranceRank();
         arr[2] = getKitchenRank();
@@ -36,13 +37,14 @@ public class ChildPriorities extends Priorities{
         return arr;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @param entity Takes a parameter of TableEntity
      * @return getComparableArray return the array of fields we want to compare from the table entry.
      */
     @Override
     public int[] getComparableArray(TableEntity entity){
-        int[] temp = new int[6];
+        int[] temp = new int[7];
         temp[0] = entity.getBar();
         temp[1] = entity.getEntrance();
         temp[2] = entity.getKitchen();
@@ -53,4 +55,10 @@ public class ChildPriorities extends Priorities{
 
         return temp;
     }
+
+
+
+
+
+//This curly bracket is this class scope
 }

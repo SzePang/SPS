@@ -23,6 +23,7 @@ public final class DisabilityPriorities extends Priorities {
         this.entranceRank = 10;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Give only fields we care about with the disability priorities
     @Override
     public int[] getComparableArray(){
@@ -37,6 +38,7 @@ public final class DisabilityPriorities extends Priorities {
         return arr;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * @param entity Takes a parameter of TableEntity
      * @return getComparableArray return the array of fields we want to compare from the table entry.
@@ -53,6 +55,7 @@ public final class DisabilityPriorities extends Priorities {
 
         return temp;
     }
+
 
 
 //End of Class curly bracket

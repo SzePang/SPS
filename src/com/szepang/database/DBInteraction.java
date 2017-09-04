@@ -1,5 +1,6 @@
 package com.szepang.database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -37,6 +38,8 @@ public class DBInteraction {
         return sessionFactory;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Adds a table to the database
      * @param table table to be added
@@ -52,12 +55,6 @@ public class DBInteraction {
         try {
             session = sessionFactory.openSession();
             tx = session.beginTransaction();
-
-            // Creating Table entity that will be save to the sqlite database
-            //TableEntity tTable1 = new TableEntity(1, 5, false, false, false, false, false, false,
-            //        false, false);
-           // TableEntity tTable2 = new TableEntity(2, 6, false, false, false, false, false, false,
-           //         false, false);
 
             // Saving to the database
             session.save(table);
@@ -89,6 +86,8 @@ public class DBInteraction {
             }
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**Deletes a Table entity in the database by the table number
      *@param tableNumId The table number
@@ -133,6 +132,8 @@ public class DBInteraction {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * Deletes all table entries in the database
      *                  TEST - PASS
@@ -174,11 +175,11 @@ public class DBInteraction {
         }
     }
 
-//Prints all tables in the database
+    //Prints all tables in the database
     //TODO --------------------------------MUST TEST
     public static void printAllTables() {
 
-// Configure the session factory
+    // Configure the session factory
         configureSessionFactory();
 
         Session session = null;
@@ -190,7 +191,7 @@ public class DBInteraction {
         List<TableEntity> tableEntityList = session.createQuery("from TableEntity").list();
         for (TableEntity tTable : tableEntityList) {
 
-System.out.println("t-num: " + tTable.getTableNumber() );
+    System.out.println("t-num: " + tTable.getTableNumber() );
 
             //Print out all the fields of the entity
             tTable.printTableProperty();
@@ -211,6 +212,8 @@ System.out.println("t-num: " + tTable.getTableNumber() );
             }
         }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     //FOR TESTING - CHECK ALL TABLES ARE VIEWABLE
@@ -259,10 +262,11 @@ System.out.println("t-num: " + tTable.getTableNumber() );
         return temp;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//TODO check this works - MUST PROPERLY IMPLEMENT ----- MUST TEST
-//@return TableEntity returns a TableEntity object
+    //TODO check this works - MUST PROPERLY IMPLEMENT ----- MUST TEST
+    //@return TableEntity returns a TableEntity object
      // by looking for its unique table number
      //
     public static TableEntity getTableEntity(int tableNumId) {
@@ -292,14 +296,14 @@ System.out.println("t-num: " + tTable.getTableNumber() );
         return thisT;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 /**@param numOfPeople number of people
      Return the table that matches the Seat Quantity
      Also checks that the table is Free to seat people*/
-
  //TODO --------- MUST TEST - PASS
-    public static int matchFreeSeat (int numOfPeople) {
+    public static int tbMatchSeat (int numOfPeople) {
 
         // Configure the session factory
         configureSessionFactory();
@@ -349,8 +353,52 @@ System.out.println("t-num: " + tTable.getTableNumber() );
         }
         return tNum;
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static int tbMatchSeat (int numOfPeople, Priorities priorities) {
+    /**
+     * @param numOfPeople number of people that need to be seated
+     * @return tableEntityList, return an array list of table entities that are free and match the user seatQty request
+     */
+    //TODO --------- MUST TEST
+    public static List<TableEntity> tbMatchList (int numOfPeople) {
+
+        // Configure the session factory
+        configureSessionFactory();
+        Session session = null;
+
+        int tNum = 0;
+        List<TableEntity> tableEntityList = new ArrayList<TableEntity>();
+
+        try {
+            session = sessionFactory.openSession();
+
+            //TODO Consider if a client makes table called 0
+            tableEntityList = session.createQuery("from TableEntity as t where t.free =" +
+                    "true and t.seatQty >= :numOfPeople").setParameter("numOfPeople", numOfPeople).list();
+
+            // Committing the change in the database.
+            session.flush();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+        return tableEntityList;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    /**@param numOfPeople number of people
+    Return the table that matches the Seat Quantity plus disability priority
+    Also checks that the table is Free to seat people*/
+    public static int disabledMatchSeat (int numOfPeople, Priorities priorities) {
 
         // Configure the session factory
         configureSessionFactory();
@@ -372,11 +420,11 @@ System.out.println("t-num: " + tTable.getTableNumber() );
 
                 for (TableEntity tTable : tableEntityList) {
                     int[] TableProperties = priorities.getComparableArray(tTable);
-                    double tableSimularity = TableController.similarity(featuresPrioritised, TableProperties);
-                    System.out.println("Table " + tTable.getTableNumber() + " = " + tableSimularity);
+                    double tableSimalarity = TableController.similarity(featuresPrioritised, TableProperties);
+                    System.out.println("Table " + tTable.getTableNumber() + " = " + tableSimalarity);
 
-                    if(previousSim < tableSimularity){
-                        previousSim = tableSimularity;
+                    if(previousSim < tableSimalarity){
+                        previousSim = tableSimalarity;
                         tNum = tTable.getTableNumber();
                     }
 
