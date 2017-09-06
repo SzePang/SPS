@@ -365,9 +365,12 @@ public class DBInteraction {
         // Configure the session factory
         configureSessionFactory();
         Session session = null;
+        Transaction tx = null;
 
-        int tNum = 0;
-        List<TableEntity> tableEntityList = new ArrayList<TableEntity>();
+        List<TableEntity> tableEntityList = new ArrayList<>();
+
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
 
         try {
             session = sessionFactory.openSession();
@@ -378,10 +381,14 @@ public class DBInteraction {
 
             // Committing the change in the database.
             session.flush();
+           tx.commit();
 
         } catch (Exception ex) {
             ex.printStackTrace();
 
+            // Rolling back the changes to make the data consistent in case of any failure
+            // in between multiple database write operations.
+            tx.rollback();
 
         } finally {
             if (session != null) {
@@ -395,9 +402,9 @@ public class DBInteraction {
 
 
 
-    /**@param numOfPeople number of people
+  /*  /**@param numOfPeople number of people
     Return the table that matches the Seat Quantity plus disability priority
-    Also checks that the table is Free to seat people*/
+    Also checks that the table is Free to seat people*//*
     public static int disabledMatchSeat (int numOfPeople, Priorities priorities) {
 
         // Configure the session factory
@@ -406,7 +413,7 @@ public class DBInteraction {
 
         int tNum = 0;
         double previousSim = 0.0;
-//        Transaction tx = null;
+        Transaction tx = null;
 
         try {
             session = sessionFactory.openSession();
@@ -430,17 +437,16 @@ public class DBInteraction {
 
             }
 
-
             // Committing the change in the database.
             session.flush();
-//            tx.commit();
+            tx.commit();
 
         } catch (Exception ex) {
             ex.printStackTrace();
 
             // Rolling back the changes to make the data consistent in case of any failure
             // in between multiple database write operations.
-//            tx.rollback();
+            tx.rollback();
 
         } finally {
             if (session != null) {
@@ -449,6 +455,8 @@ public class DBInteraction {
         }
         return tNum;
     }
+*/
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //TODO CHECK THIS WORKS MUST TEST - PASS
 //@param tNum books the table number specified

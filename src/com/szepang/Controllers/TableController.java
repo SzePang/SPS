@@ -61,17 +61,20 @@ public class TableController {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    Map<Integer, Integer> tableMap = new HashMap<>();
+
 
     /*Method that filters the form to determine the people priorities and then call the correct method to
     process the request*/
     @RequestMapping(value = "/findPriority", method = RequestMethod.POST)
-    public ModelAndView findPriorityTable(@RequestParam("numPeople") int numOfPeople,
+    public ModelAndView findPriorityTable(@RequestParam(value = "numPeople") int numOfPeople,
                                   @RequestParam(value = "priorities", required = false) String[] priorityList) {
+
+        Map<Integer, Integer> tableMap = new HashMap<>();
 
         //Check that there is a table that can sit the number of people first
         int tNum = 0;
-        tNum = DBInteraction.tbMatchSeat(numOfPeople);
+        List<TableEntity> tableList = DBInteraction.tbMatchList(numOfPeople);
+        tNum = tableList.size();
         //If no table exists, DBInteraction will return 0
         if (tNum == 0) {
             ModelAndView model = new ModelAndView("GenericNoSuccess");
@@ -168,26 +171,6 @@ public class TableController {
         model.addObject("msg","Find a table");
 
         return model;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    @RequestMapping(value="/lookupTable", method = RequestMethod.POST)
-    public ModelAndView lookupTable (@RequestParam("numPeople") int pAmount) {
-
-        //Method disabledMatchSeat, matches the user specified customers with the seats of tables in list.
-        int theTableNum = DBInteraction.disabledMatchSeat(pAmount, new DisabilityPriorities());
-
-        if(theTableNum == 0) {
-            ModelAndView model = new ModelAndView("GenericNoSuccess");
-            model.addObject("result1",
-                    "Sorry, there are no available tables that can seat the amount of people in your party.");
-            return model;
-        }
-        else {
-            ModelAndView model = new ModelAndView("FoundSuccess");
-            model.addObject("result", theTableNum);
-            return model;
-        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
