@@ -18,7 +18,7 @@
 <form action="/findPriority"  method="post">
 
     <p>
-        Number of people : <input type="number" name="numPeople" />
+        Number of people : <input type="number" min="1" step="1" value="0" name="numPeople" />
     </p>
 
     <p>Check if any of the following apply to the party:</p>

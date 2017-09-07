@@ -16,7 +16,7 @@
 
 <form action="/deleteTheTable"  method="post">
 
-    <p>Table Number to DELETE : <input type="number" name= "theTable" />
+    <p>Table Number to DELETE : <input type="number" min="1" step="1" value="0" name= "theTable" />
     </p>
 
 

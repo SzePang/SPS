@@ -10,7 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
 
-
 /**
  * Created by Sze on 12/08/2017.
  */
@@ -42,22 +41,35 @@ public class TableController {
                                    @RequestParam(name = "bar", defaultValue = "1") int byBar,
                                    @RequestParam(name = "entrance", defaultValue = "1") int byEntrance) {
 
-        //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
-        TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
-                byKitchen, byWalkway, byBar, byEntrance);
+        //Check if the table already exists in the database before adding the table
+        TableEntity tableEntity = null;
+        tableEntity = DBInteraction.getTableEntity(theTableNum);
+        if (tableEntity == null) {
 
-        //ADDS the table to the database
-        DBInteraction.addTable(table1);
 
-        //TODO check that the table number the user is trying to create does not yet exist in the DB/array list tbl1
-        //TEST: Check that all fields are appropriately added
-        table1.printTableProperty();
+            //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
+            TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
+                    byKitchen, byWalkway, byBar, byEntrance);
 
-        ModelAndView model = new ModelAndView("/AddTableSuccess");
-        model.addObject("headerMessage", "Successfully added table " + theTableNum);
-        model.addObject("table1", table1);
+            //ADDS the table to the database
+            DBInteraction.addTable(table1);
 
-        return model;
+            //TODO check that the table number the user is trying to create does not yet exist in the DB/array list tbl1
+            //TEST: Check that all fields are appropriately added
+            table1.printTableProperty();
+
+            ModelAndView model = new ModelAndView("/AddTableSuccess");
+            model.addObject("headerMessage", "Successfully added table " + theTableNum);
+            model.addObject("table1", table1);
+
+            return model;
+        }
+        else {
+            ModelAndView model = new ModelAndView("/GenericNoSuccess");
+            model.addObject("result1", "Table " + tableEntity.getTableNumber() + " already exists");
+
+            return model;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +81,7 @@ public class TableController {
     public ModelAndView findPriorityTable(@RequestParam(value = "numPeople") int numOfPeople,
                                   @RequestParam(value = "priorities", required = false) String[] priorityList) {
 
+        //tableMap stored the table Number as a key and the sum of getDiffTotal() as a value
         Map<Integer, Integer> tableMap = new HashMap<>();
 
         //Check that there is a table that can sit the number of people first
@@ -87,10 +100,10 @@ public class TableController {
             //Check if priorityList contains any string of person priorities
             if (priorityList == null || priorityList.length == 0) {
                 NoPriority noPriority = new NoPriority();
-                List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
+                //List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
 
                 double score = 0.0;
-                for (TableEntity tTable : suitableTableList) {
+                for (TableEntity tTable : tableList) {
                     double tableSimalarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
                     if (score < tableSimalarity) {
                         score = tableSimalarity;
@@ -99,10 +112,7 @@ public class TableController {
                 }
 
             } else {
-                //Priorities must have been selected there perform the following block of code
-                //List of suitable tables returned from DBInteration
-                List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
-
+                //Priorities must have been selected therefore perform the following block of code
                 //Get required priority objects and but them in a list
                 List<Priorities> checkedPriorities = new ArrayList<>();
                 for (String checked : priorityList) {
@@ -123,9 +133,10 @@ public class TableController {
                     }
                 }
 
-                for (TableEntity tTable : suitableTableList) {
+                for (TableEntity tTable : tableList) {
                     int sum = 0;
                     for (Priorities p : checkedPriorities) {
+                        //the sum of the differences for all checked priorities
                         sum += getDiffTotal(p.getComparableArray(), p.getComparableArray(tTable));
                     }
                     //Store the table number as the key and the sum as the value in a Map
@@ -134,7 +145,6 @@ public class TableController {
 
                 //get the lowest scoring table
                 tNum = getBestTableNumberInMap(tableMap);
-                //DBInteraction.getTableEntity(bestTable);
             }
         }
         ModelAndView model = new ModelAndView("FoundSuccess");
@@ -268,7 +278,7 @@ public class TableController {
         String toPrint = DBInteraction.getHtmlForAllTables();
 
         ModelAndView model = new ModelAndView("DisplayTables");
-        model.addObject("someResult1", "All tables are deleted");
+        model.addObject("result1", "All tables in the system");
         model.addObject("html", toPrint);
         return model;
 

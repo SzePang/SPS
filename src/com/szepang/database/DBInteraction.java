@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.szepang.Controllers.TableController;
-import com.szepang.PeoplePriorities.Priorities;
 import com.szepang.Models.TableEntity;
-import com.szepang.htmlviews.HtmlBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,6 +12,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+
+import com.szepang.htmlviews.HtmlBuilder;
 
 
 /**
@@ -86,6 +85,7 @@ public class DBInteraction {
             }
         }
     }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -221,7 +221,7 @@ public class DBInteraction {
 
         String temp = "";
 
-// Configure the session factory
+        // Configure the session factory
         configureSessionFactory();
 
         Session session = null;
