@@ -121,16 +121,18 @@ public class TableController {
                     NoPriority noPriority = new NoPriority();
                     double threshold = 0.6;
                     List<TableEntity> filteredList = new ArrayList<>();
-                    for (TableEntity tTable : tableList) {
+                    for (TableEntity tTable : seatSort) {
                         double tableSimilarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
                         if (tableSimilarity > threshold) {
                            filteredList.add(tTable);
                         }
+                        //////TEST
+                        System.out.println("table number: " + tTable.getTableNumber() + " table sim: " +tableSimilarity );
                     }
 
                     if(filteredList.isEmpty()){
                         threshold = 0.4;
-                        for (TableEntity tTable : tableList) {
+                        for (TableEntity tTable : seatSort) {
                             double tableSimilarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
                             if (tableSimilarity > threshold) {
                                 filteredList.add(tTable);
@@ -139,11 +141,21 @@ public class TableController {
                     }
 
 
-                    //pick a random table from the list of suitable tables with seatQty field filtered
-                    Random r = new Random();
-                    int n = r.nextInt(filteredList.size());
-                    TableEntity randomEntity = filteredList.get(n);
-                    tNum = randomEntity.getTableNumber();
+                    if(filteredList.isEmpty()){ //if nothing was found above the thresholds
+                        //pick a random table from the list of suitable tables with seatQty field filtered
+                        //Give Random anything of numOfPeople + 2
+                        //Don't do similarity anymore, give any seat from seatSort (including tables which would have been best for priority groups)
+                        Random r = new Random();
+                        int n = r.nextInt(seatSort.size());
+                        TableEntity randomEntity = seatSort.get(n);
+                        tNum = randomEntity.getTableNumber();
+                    }else { //if there are seats above a threshold
+                        //pick a random table from the list of suitable tables with seatQty field filtered
+                        Random r = new Random();
+                        int n = r.nextInt(filteredList.size());
+                        TableEntity randomEntity = filteredList.get(n);
+                        tNum = randomEntity.getTableNumber();
+                    }
                 }
 /*
                 //Commented out block of code below to allow a table to be picked from a list at random
