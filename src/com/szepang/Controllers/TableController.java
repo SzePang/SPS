@@ -1,14 +1,19 @@
 package com.szepang.Controllers;
 
+import com.sun.tools.javac.comp.Todo;
+import com.sun.xml.internal.ws.developer.Serialization;
 import com.szepang.PeoplePriorities.*;
 import com.szepang.Models.TableEntity;
 
 import com.szepang.database.DBInteraction;
+import org.springframework.http.converter.json.GsonBuilderUtils;
+import org.springframework.http.converter.json.GsonFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Sze on 12/08/2017.
@@ -46,7 +51,6 @@ public class TableController {
         tableEntity = DBInteraction.getTableEntity(theTableNum);
         if (tableEntity == null) {
 
-
             //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
             TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
                     byKitchen, byWalkway, byBar, byEntrance);
@@ -54,7 +58,6 @@ public class TableController {
             //ADDS the table to the database
             DBInteraction.addTable(table1);
 
-            //TODO check that the table number the user is trying to create does not yet exist in the DB/array list tbl1
             //TEST: Check that all fields are appropriately added
             table1.printTableProperty();
 
@@ -63,8 +66,7 @@ public class TableController {
             model.addObject("table1", table1);
 
             return model;
-        }
-        else {
+        } else {
             ModelAndView model = new ModelAndView("/GenericNoSuccess");
             model.addObject("result1", "Table " + tableEntity.getTableNumber() + " already exists");
 
@@ -79,7 +81,7 @@ public class TableController {
     process the request*/
     @RequestMapping(value = "/findPriority", method = RequestMethod.POST)
     public ModelAndView findPriorityTable(@RequestParam(value = "numPeople") int numOfPeople,
-                                  @RequestParam(value = "priorities", required = false) String[] priorityList) {
+                                          @RequestParam(value = "priorities", required = false) String[] priorityList) {
 
         //tableMap stored the table Number as a key and the sum of getDiffTotal() as a value
         Map<Integer, Integer> tableMap = new HashMap<>();
@@ -88,6 +90,9 @@ public class TableController {
         int tNum = 0;
         List<TableEntity> tableList = DBInteraction.tbMatchList(numOfPeople);
         tNum = tableList.size();
+        //////////////////////////////////////////TEST
+        System.out.println("The amount of tables in the tableList: " + tNum);
+
         //If no table exists, DBInteraction will return 0
         if (tNum == 0) {
             ModelAndView model = new ModelAndView("GenericNoSuccess");
@@ -95,22 +100,66 @@ public class TableController {
                     "Sorry, there are no available tables that can seat the amount of people in your party.");
             return model;
         }
-        //If a table exists to sit the party, perform person priorities checks
+        //If a table exists to sit the party, perform table seatQty checks and person priority checks
         else {
-            //Check if priorityList contains any string of person priorities
+            //Check if priorityList contains any string of person priorities, if none, use NoPriority class
             if (priorityList == null || priorityList.length == 0) {
-                NoPriority noPriority = new NoPriority();
-                //List<TableEntity> suitableTableList = DBInteraction.tbMatchList(numOfPeople);
 
+                //Filter the tableList to get tables that are equal in size to the number of people to be seated
+                List<TableEntity> seatSort = tableSeatSet(tableList, numOfPeople, true);
+
+
+                //Check if a filtering seat array is empty
+                if (seatSort.isEmpty()) {
+                    ModelAndView model = new ModelAndView("NoEqualTable");
+                    /*model.addObject("result1", tableList);*/
+                    model.addObject("result1", numOfPeople);
+                    model.addObject("result2", true);
+                    return model;
+                } else {
+                    //toDo difference check and add threshold so tables suitable for potential priority groups are not first chosen
+                    NoPriority noPriority = new NoPriority();
+                    double threshold = 0.6;
+                    List<TableEntity> filteredList = new ArrayList<>();
+                    for (TableEntity tTable : tableList) {
+                        double tableSimilarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
+                        if (tableSimilarity > threshold) {
+                           filteredList.add(tTable);
+                        }
+                    }
+
+                    if(filteredList.isEmpty()){
+                        threshold = 0.4;
+                        for (TableEntity tTable : tableList) {
+                            double tableSimilarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
+                            if (tableSimilarity > threshold) {
+                                filteredList.add(tTable);
+                            }
+                        }
+                    }
+
+
+                    //pick a random table from the list of suitable tables with seatQty field filtered
+                    Random r = new Random();
+                    int n = r.nextInt(filteredList.size());
+                    TableEntity randomEntity = filteredList.get(n);
+                    tNum = randomEntity.getTableNumber();
+                }
+/*
+                //Commented out block of code below to allow a table to be picked from a list at random
+                //The following code gets only one table by best similarity score
+                NoPriority noPriority = new NoPriority();
                 double score = 0.0;
                 for (TableEntity tTable : tableList) {
-                    double tableSimalarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
-                    if (score < tableSimalarity) {
-                        score = tableSimalarity;
+                    double tableSimilarity = similarity(noPriority.getComparableArray(), noPriority.getComparableArray(tTable));
+                    if (score < tableSimilarity) {
+                        score = tableSimilarity;
                         tNum = tTable.getTableNumber();
                     }
-                }
-
+                    //TEST
+                    System.out.println("--------------------------");
+                    System.out.println("Table no. : " + tTable.getTableNumber() + " Similarity: " + tableSimilarity);
+                }*/
             } else {
                 //Priorities must have been selected therefore perform the following block of code
                 //Get required priority objects and but them in a list
@@ -133,24 +182,38 @@ public class TableController {
                     }
                 }
 
-                for (TableEntity tTable : tableList) {
-                    int sum = 0;
-                    for (Priorities p : checkedPriorities) {
-                        //the sum of the differences for all checked priorities
-                        sum += getDiffTotal(p.getComparableArray(), p.getComparableArray(tTable));
-                    }
-                    //Store the table number as the key and the sum as the value in a Map
-                    tableMap.put(tTable.getTableNumber(), sum);
-                }
+                List<TableEntity> seatSort = tableSeatSet2(tableList, numOfPeople, false);
 
-                //get the lowest scoring table
-                tNum = getBestTableNumberInMap(tableMap);
+                //Check if a filtering seat array is not empty
+                if (!seatSort.isEmpty()) {
+
+                    for (TableEntity tTable : seatSort) {
+                        int sum = 0;
+                        for (Priorities p : checkedPriorities) {
+                            //the sum of the differences for all checked priorities
+                            sum += getDiffTotal(p.getComparableArray(), p.getComparableArray(tTable));
+                        }
+                        //Store the table number as the key and the sum as the value in a Map
+                        tableMap.put(tTable.getTableNumber(), sum);
+                    }
+
+                    //get the lowest scoring table
+                    tNum = getBestTableNumberInMap(tableMap);
+                }
+                if (seatSort.isEmpty()) {
+                    ModelAndView model = new ModelAndView("GenericNoSuccess");
+                    model.addObject("result1", "Could not find a table that allows " +
+                            "a remainder of two seats for the party");
+                    return model;
+                }
             }
         }
-        ModelAndView model = new ModelAndView("FoundSuccess");
-        model.addObject("result", tNum);
-        return model;
+            ModelAndView model = new ModelAndView("FoundSuccess");
+            model.addObject("result", tNum);
+            return model;
     }
+
+
 
     /**
      * @param tableMap
@@ -169,6 +232,38 @@ public class TableController {
             }
         }
         return 0; //shouldn't happen
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Second attempt in searching for a table with max remainder seat of 2
+    @RequestMapping("/searchAgain.html/{result1} {result2}")
+    //todo consider making tableList a integer array
+    public ModelAndView findAgain(@PathVariable(value="result1") int numOfPeople,
+                                  @PathVariable(value="result2") Boolean noPriority){
+
+        List<TableEntity> tableList = DBInteraction.tbMatchList(numOfPeople);
+
+        List<TableEntity> secondList = tableSeatSet2(tableList, numOfPeople, noPriority);
+        int tNum = 0;
+
+        if (!secondList.isEmpty()) {
+            //pick a random table from the list of suitable tables with seatQty field filtered
+            //todo Add threshold so table appropriate for potential priority groups are not picked initially in the first randomizer
+            Random r = new Random();
+            int n = r.nextInt(secondList.size());
+            TableEntity randomEntity = secondList.get(n);
+            tNum = randomEntity.getTableNumber();
+
+            ModelAndView model = new ModelAndView("FoundSuccess");
+            model.addObject("result",+tNum);
+
+            return model;
+
+        }
+
+        ModelAndView model = new ModelAndView("GenericNoSuccess");
+        model.addObject("result1",tNum + " tables with a remainder of two seats available" +
+                "to fit your party");
+        return model;
     }
 
 
@@ -318,6 +413,78 @@ public class TableController {
         }
         return Math.sqrt(score);
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Filter the list of suitable tables by it's equal seat quantity
+    public static List<TableEntity> tableSeatSet (List<TableEntity> tSet, int nPeople, Boolean noPriority) {
+
+        List<TableEntity> tableSet = new ArrayList<>();
+        Boolean notFound = true;
+        if (noPriority) {
+            ///////TEST
+            System.out.println("noPriority = true therefore,");
+            System.out.println("Looking tables that match the equal num of People:");
+
+            for (TableEntity t : tSet) {
+                if (t.getSeatQty() == nPeople) {
+                    tableSet.add(t);
+                    notFound = false;
+                    //////TEST
+                    System.out.println("NumOfPeople: " + nPeople);
+                    System.out.println("Table num: " + t.getTableNumber() + " SeatQty: " + t.getSeatQty());
+                    System.out.println("------------------------------------------");
+                }
+            }
+        }
+        return tableSet;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Second check for a suitable seat allowing a seat remainder of 2
+    public static List<TableEntity> tableSeatSet2 (List<TableEntity> tSet, int nPeople, Boolean noPriority) {
+
+        List<TableEntity> tableSet = new ArrayList<>();
+        Boolean notFound = true;
+        //Check again just incase a table with equal seats to the group number becomes available
+        if (noPriority) {
+            ///////TEST
+            System.out.println("noPriority = true therefore,");
+            System.out.println("Looking tables that match the equal num of People:");
+
+            for (TableEntity t : tSet) {
+                if (t.getSeatQty() == nPeople) {
+                    tableSet.add(t);
+                    notFound = false;
+                    //////TEST
+                    System.out.println("NumOfPeople: " + nPeople);
+                    System.out.println("Table num: " + t.getTableNumber() + " SeatQty: " + t.getSeatQty());
+                    System.out.println("------------------------------------------");
+                }
+            }
+        }
+        if (notFound || !noPriority) { //if still not found or if there is a Priority
+            /////////TEST
+            System.out.println("notFound == true || noPriority = false, therefore,");
+            System.out.println("looking for tables that are numOfPeople + 2...");
+
+            for (TableEntity t : tSet) {
+
+                if (t.getSeatQty() <= nPeople + 2 ) {
+                    //todo add in descending order
+                    tableSet.add(t);
+                    ////////TEST
+                    System.out.println("NumOfPeople: " + nPeople);
+                    System.out.println("Found table num: " + t.getTableNumber() + " - Seats: " + t.getSeatQty() );
+                }
+            }
+        }
+        else {
+            System.out.println("The current tables that can seat your party have a seat remainder over 2.");
+        }
+        return tableSet;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 

@@ -263,9 +263,6 @@ public class DBInteraction {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    //TODO check this works - MUST PROPERLY IMPLEMENT ----- MUST TEST
     //@return TableEntity returns a TableEntity object
      // by looking for its unique table number
      //
@@ -302,7 +299,6 @@ public class DBInteraction {
 /**@param numOfPeople number of people
      Return the table that matches the Seat Quantity
      Also checks that the table is Free to seat people*/
- //TODO --------- MUST TEST - PASS
     public static int tbMatchSeat (int numOfPeople) {
 
         // Configure the session factory
@@ -354,12 +350,10 @@ public class DBInteraction {
         return tNum;
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * @param numOfPeople number of people that need to be seated
-     * @return tableEntityList, return an array list of table entities that are free and match the user seatQty request
+     * @return tableEntityList, return an array list of table entities that are free and match the user seat request
      */
-    //TODO --------- MUST TEST
     public static List<TableEntity> tbMatchList (int numOfPeople) {
 
         // Configure the session factory
@@ -399,67 +393,7 @@ public class DBInteraction {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-  /*  /**@param numOfPeople number of people
-    Return the table that matches the Seat Quantity plus disability priority
-    Also checks that the table is Free to seat people*//*
-    public static int disabledMatchSeat (int numOfPeople, Priorities priorities) {
-
-        // Configure the session factory
-        configureSessionFactory();
-        Session session = null;
-
-        int tNum = 0;
-        double previousSim = 0.0;
-        Transaction tx = null;
-
-        try {
-            session = sessionFactory.openSession();
-
-            //TODO Filter request to get tables that are free and can seat the quantity of people
-            List<TableEntity> tableEntityList = session.createQuery("from TableEntity as t where t.free =" +
-                    "true and t.seatQty >= :numOfPeople").setParameter("numOfPeople", numOfPeople).list();
-
-            int[] featuresPrioritised = priorities.getComparableArray();
-
-
-                for (TableEntity tTable : tableEntityList) {
-                    int[] TableProperties = priorities.getComparableArray(tTable);
-                    double tableSimalarity = TableController.similarity(featuresPrioritised, TableProperties);
-                    System.out.println("Table " + tTable.getTableNumber() + " = " + tableSimalarity);
-
-                    if(previousSim < tableSimalarity){
-                        previousSim = tableSimalarity;
-                        tNum = tTable.getTableNumber();
-                    }
-
-            }
-
-            // Committing the change in the database.
-            session.flush();
-            tx.commit();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-
-            // Rolling back the changes to make the data consistent in case of any failure
-            // in between multiple database write operations.
-            tx.rollback();
-
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return tNum;
-    }
-*/
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    //TODO CHECK THIS WORKS MUST TEST - PASS
-//@param tNum books the table number specified
+    //@param tNum books the table number specified
     public static void bookT(int tNum) {
 
         // Configure the session factory
@@ -504,8 +438,7 @@ public class DBInteraction {
     }
 }
 
-
-//TODO CHECK THIS WORKS MUST TEST - PASS
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // FREE all tables
     public static void freeAllTables() {
 
@@ -547,11 +480,10 @@ public class DBInteraction {
 
     }
 
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /**FREE a Table entity in the database by the table number
      *@param tableNumId The table number
      */
-    //TODO CHECK THIS _____ PASS
     public static void freeTheTable(int tableNumId) {
         // Configure the session factory
         configureSessionFactory();

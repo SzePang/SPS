@@ -15,7 +15,7 @@
 <h1>Find a suitable table</h1>
 
 <%--FORM to search for a table--%>
-<form action="/findPriority"  method="post">
+<form action="/findPriority" method="post">
 
     <p>
         Number of people : <input type="number" min="1" step="1" value="0" name="numPeople" />
