@@ -17,7 +17,7 @@
 
 <form action="/freeTheTable"  method="post">
 
-    <p>Table Number to FREE : <input type="number" min="1" step="1" value="0" name= "theTable" />
+    <p>Table Number to FREE : <input type="number" <%--min="1" step="1"--%> value="0" name= "theTable" />
     </p>
 
 

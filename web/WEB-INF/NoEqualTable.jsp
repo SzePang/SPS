@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<h1>No available tables that have equal seats for the number in your party.</h1>
+<h1>No equal seats for the number in your party.</h1>
 
 <h2>Search again for a larger table that will have a remainder of two seats?</h2>
 <a href="/searchAgain.html/${result1} ${result2} ">Search again</a>

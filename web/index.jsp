@@ -31,8 +31,8 @@
   </p>
 
   <p>
-    <%--Frees all tables--%>
-    <a href="/freeAllTables"/>Free all tables</a>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
   </p>
 
 

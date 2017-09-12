@@ -12,9 +12,28 @@
 </head>
 <body>
 
-<h1>${result1}</h1>
+<h1>Error: ${result1}</h1>
 
-<h2>${result2}</h2>
+
+<p>
+    <%--Takes the user to the ADD a table--%>
+    <a href="/addTable.html"/>Add Tables</a>
+</p>
+
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/findTable.html"/>Seat a customer</a>
+</p>
+
+<p>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
+</p>
 
 </body>
 </html>

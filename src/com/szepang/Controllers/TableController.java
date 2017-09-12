@@ -1,5 +1,6 @@
 package com.szepang.Controllers;
 
+import com.szepang.Messages.Error;
 import com.szepang.PeoplePriorities.*;
 import com.szepang.Models.TableEntity;
 
@@ -96,13 +97,12 @@ public class TableController {
             return model;
         }
         //If a table exists to sit the party, perform table seatQty checks and person priority checks
-        else {
+        else{
             //Check if priorityList contains any string of person priorities, if none, use NoPriority class
             if (priorityList == null || priorityList.length == 0) {
 
                 //Filter the tableList to get tables that are equal in size to the number of people to be seated
                 List<TableEntity> seatSort = tableSeatSet(tableList, numOfPeople, true);
-
 
                 //Check if a filtering seat array is empty
                 if (seatSort.isEmpty()) {
@@ -191,8 +191,7 @@ public class TableController {
 
                 List<TableEntity> seatSort = tableSeatSet2(tableList, numOfPeople, false);
 
-                //Check if a filtering seat array is not empty
-                if (!seatSort.isEmpty()) {
+                if (!seatSort.isEmpty()) { //Check if a filtering seat array is not empty
 
                     for (TableEntity tTable : seatSort) {
                         int sum = 0;
@@ -228,8 +227,7 @@ public class TableController {
      * of the total difference of the Person Priorities against the Table Properties
      */
     int getBestTableNumberInMap(Map<Integer, Integer> tableMap) {
-        //Check that the Map is not empty
-        if(tableMap.isEmpty())
+        if(tableMap.isEmpty())  //Check that the Map is not empty
             throw new IllegalStateException("Number of tables cannot be 0 in length");
 
         int minValueInMap = (Collections.min(tableMap.values()));  // This will return SMALLEST value in the Hashmap
@@ -253,8 +251,8 @@ public class TableController {
         int tNum = 0;
 
         if (!secondList.isEmpty()) {
-            //pick a random table from the list of suitable tables with seatQty field filtered
             //todo Add threshold so table appropriate for potential priority groups are not picked initially in the first randomizer
+            //pick a random table from the list of suitable tables with seatQty field filtered
             Random r = new Random();
             int n = r.nextInt(secondList.size());
             TableEntity randomEntity = secondList.get(n);
@@ -329,18 +327,27 @@ public class TableController {
     @RequestMapping(value = "/freeTheTable", method = RequestMethod.POST)
     public ModelAndView freeTableNum(@RequestParam("theTable") int theTable) {
 
-        if(theTable == 0){
-            String title = "Error freeing table";
-            String desc = "Table number cannot be 0";
+        if(theTable < 1){ //Do not allow the user to enter 0 or negative values
             ModelAndView model = new ModelAndView("ErrorPage");
-            model.addObject("result1", title);
-            model.addObject("result2", desc);
+            model.addObject("result1", Error.TABLE_CANNOT_BE_0.getDescription());
             return model;
-
         }
 
+        TableEntity t = DBInteraction.getTableEntity(theTable);
+        if(t == null){ //Do not allow the user to enter a table number not in DB
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NON_EXISTANT.getDescription());
+            return model;
+        }
+        if(t.isFree()){ //check if the table is free already
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.TABLE_FREE_TRUE.getDescription());
+            return model;
+        }
 
-        DBInteraction.freeTheTable(theTable);
+        if(t.getTableNumber() == theTable && !t.isFree()) { //Check that
+            DBInteraction.freeTheTable(theTable);
+        }
 
         ModelAndView model = new ModelAndView("GenericSuccess");
         model.addObject("someResult1", "table " +theTable+ " is free!");
