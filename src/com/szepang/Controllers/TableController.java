@@ -1,19 +1,14 @@
 package com.szepang.Controllers;
 
-import com.sun.tools.javac.comp.Todo;
-import com.sun.xml.internal.ws.developer.Serialization;
 import com.szepang.PeoplePriorities.*;
 import com.szepang.Models.TableEntity;
 
 import com.szepang.database.DBInteraction;
-import org.springframework.http.converter.json.GsonBuilderUtils;
-import org.springframework.http.converter.json.GsonFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Sze on 12/08/2017.
@@ -311,6 +306,8 @@ public class TableController {
         model.addObject("msg","Ensure that the table is cleaned and reset" +
                 " before marking this table as free!");
 
+        //TODO - DO a check to see if the table number specified, exists in DB
+
         return model;
     }
 
@@ -331,6 +328,16 @@ public class TableController {
     //TODO - What if a user free a negative int
     @RequestMapping(value = "/freeTheTable", method = RequestMethod.POST)
     public ModelAndView freeTableNum(@RequestParam("theTable") int theTable) {
+
+        if(theTable == 0){
+            String title = "Error freeing table";
+            String desc = "Table number cannot be 0";
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", title);
+            model.addObject("result2", desc);
+            return model;
+
+        }
 
 
         DBInteraction.freeTheTable(theTable);
@@ -495,6 +502,8 @@ public class TableController {
         }
         return tableSet;
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
