@@ -134,7 +134,6 @@ public class TableController {
                         }
                     }
 
-
                     if(filteredList.isEmpty()){ //if nothing was found above the thresholds
                         //pick a random table from the list of suitable tables with seatQty field filtered
                         //Give Random anything of numOfPeople
@@ -252,7 +251,6 @@ public class TableController {
         if (!seatSort.isEmpty() && noPriority) {
             //todo Add threshold so table appropriate for potential priority groups are not picked initially in the first randomizer
             //pick a random table from the list of suitable tables with seatQty field filtered
-
 
             NoPriority noPriorityObject = new NoPriority();
             double threshold = 0.6;

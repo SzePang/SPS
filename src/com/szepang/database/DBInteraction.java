@@ -13,8 +13,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import com.szepang.htmlviews.HtmlBuilder;
-
 
 /**
  * Created by Sze on 20/08/2017.
