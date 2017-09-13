@@ -15,7 +15,7 @@
 
 <h1>${msg}</h1>
 
-<form action="/confirmNeed/"  method="post">
+<form action="/freeTheTable"  method="post">
 
     <p>Table Number to FREE : <input type="number" min="1" step="1" value="0" name= "theTable" />
     </p>

@@ -137,7 +137,7 @@ public class TableController {
 
                     if(filteredList.isEmpty()){ //if nothing was found above the thresholds
                         //pick a random table from the list of suitable tables with seatQty field filtered
-                        //Give Random anything of numOfPeople + 2
+                        //Give Random anything of numOfPeople
                         //Don't do similarity anymore, give any seat from seatSort (including tables which would have been best for priority groups)
                         Random r = new Random();
                         int n = r.nextInt(seatSort.size());
@@ -244,21 +244,59 @@ public class TableController {
     public ModelAndView findAgain(@PathVariable(value="result1") int numOfPeople,
                                   @PathVariable(value="result2") Boolean noPriority){
 
-        List<TableEntity> tableList = DBInteraction.tbMatchList(numOfPeople);
+        List<TableEntity> tableList = DBInteraction.tbMatchList(numOfPeople); //all of them
 
-        List<TableEntity> secondList = tableSeatSet2(tableList, numOfPeople, noPriority);
+        List<TableEntity> seatSort = tableSeatSet2(tableList, numOfPeople, noPriority); // numOfPeople +2
         int tNum = 0;
 
-        if (!secondList.isEmpty()) {
+        if (!seatSort.isEmpty() && noPriority) {
             //todo Add threshold so table appropriate for potential priority groups are not picked initially in the first randomizer
             //pick a random table from the list of suitable tables with seatQty field filtered
-            Random r = new Random();
-            int n = r.nextInt(secondList.size());
-            TableEntity randomEntity = secondList.get(n);
-            tNum = randomEntity.getTableNumber();
+
+
+            NoPriority noPriorityObject = new NoPriority();
+            double threshold = 0.6;
+            List<TableEntity> filteredList = new ArrayList<>();
+            for (TableEntity tTable : seatSort) {
+                double tableSimilarity = similarity(noPriorityObject.getComparableArray(), noPriorityObject.getComparableArray(tTable));
+                if (tableSimilarity > threshold) {
+                    filteredList.add(tTable);
+                }
+                //////TEST
+                System.out.println("table number: " + tTable.getTableNumber() + " table sim: " +tableSimilarity );
+            }
+
+            if(filteredList.isEmpty()){
+                threshold = 0.4;
+                for (TableEntity tTable : seatSort) {
+                    double tableSimilarity = similarity(noPriorityObject.getComparableArray(), noPriorityObject.getComparableArray(tTable));
+                    if (tableSimilarity > threshold) {
+                        filteredList.add(tTable);
+                    }
+                }
+            }
+
+
+            if(filteredList.isEmpty()){ //if nothing was found above the thresholds
+                //pick a random table from the list of suitable tables with seatQty field filtered
+                //Give Random anything of numOfPeople + 2
+                //Don't do similarity anymore, give any seat from seatSort (including tables which would have been best for priority groups)
+                Random r = new Random();
+                int n = r.nextInt(seatSort.size());
+                TableEntity randomEntity = seatSort.get(n);
+                tNum = randomEntity.getTableNumber();
+            }else { //if there are seats above a threshold
+                //pick a random table from the list of suitable tables with seatQty field filtered
+                Random r = new Random();
+                int n = r.nextInt(filteredList.size());
+                TableEntity randomEntity = filteredList.get(n);
+                tNum = randomEntity.getTableNumber();
+            }
+
+
 
             ModelAndView model = new ModelAndView("FoundSuccess");
-            model.addObject("result",+tNum);
+            model.addObject("result",tNum);
 
             return model;
 
