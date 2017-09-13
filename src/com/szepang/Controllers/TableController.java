@@ -366,7 +366,7 @@ public class TableController {
         }
 
         ModelAndView model = new ModelAndView("GenericSuccess");
-        model.addObject("someResult1", "table " +theTable+ " is free!");
+        model.addObject("someResult1", "table " +theTable+ " is booked!");
         return model;
     }
 
