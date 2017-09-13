@@ -43,6 +43,8 @@
     <a href="/freeATable"/>Free tables</a>
 </p>
 
+<button><a href="/displayAllTables">Display All Tables</a></button>
+
 
 </body>
 </html>

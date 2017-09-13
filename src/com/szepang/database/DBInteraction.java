@@ -175,28 +175,24 @@ public class DBInteraction {
         }
     }
 
-    //Prints all tables in the database
-    //TODO --------------------------------MUST TEST
-    public static void printAllTables() {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Gives all tables in the database
+    public static List<TableEntity> allTables() {
 
     // Configure the session factory
         configureSessionFactory();
 
         Session session = null;
 
+        List<TableEntity> tableEntityList = new ArrayList<>();
+
         try {
             session = sessionFactory.openSession();
 
         // Fetching saved data - FOR CHECKING CURRENT TABLES IN DB
-        List<TableEntity> tableEntityList = session.createQuery("from TableEntity").list();
-        for (TableEntity tTable : tableEntityList) {
+        tableEntityList = session.createQuery("from TableEntity").list();
 
-    System.out.println("t-num: " + tTable.getTableNumber() );
-
-            //Print out all the fields of the entity
-            tTable.printTableProperty();
-
-        }
             // Flushes all the streams of data
             session.flush();
 
@@ -211,55 +207,7 @@ public class DBInteraction {
                 session.close();
             }
         }
-    }
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    //FOR TESTING - CHECK ALL TABLES ARE VIEWABLE
-    public static String getHtmlForAllTables() {
-
-        String temp = "";
-
-        // Configure the session factory
-        configureSessionFactory();
-
-        Session session = null;
-        Transaction tx = null;
-
-        try {
-            session = sessionFactory.openSession();
-            tx = session.beginTransaction();
-
-            // Fetching saved data - FOR CHECKING CURRENT TABLES IN DB
-            List<TableEntity> tableEntityList = session.createQuery("from TableEntity").list();
-            for (TableEntity tTable : tableEntityList) {
-
-                temp += HtmlBuilder.getSimpleTableCard("Table " +tTable.getTableNumber(),
-                                                        "Properties: " +tTable.toString());
-
-                //Print out all the fields of the entity
-                tTable.printTableProperty();
-
-            }
-            // Flushes all the streams of data
-            session.flush();
-            tx.commit();
-
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-
-            // Rolling back the changes to make the data consistent in case of any failure
-            // in between multiple database write operations.
-            tx.rollback();
-
-        } finally{
-            if(session != null) {
-                session.close();
-            }
-        }
-        return temp;
+        return tableEntityList;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

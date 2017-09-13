@@ -12,7 +12,7 @@ public enum Error {
     TABLE_FREE_FALSE("Table is occupied and cannot be booked."),
     TABLE_EXIST("The table number already exists in the system."),
     NON_EXISTANT("The table specified does not exist."),
-    NO_CONFIRMATION("Confirmation for request could not be processed.");
+    NO_TABLES_IN_DB("There are no existing tables in the system.");
 
 
     private final String description;

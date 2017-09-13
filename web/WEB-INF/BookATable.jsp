@@ -21,7 +21,7 @@
 
     <p> <input type="submit" value="Book Table" /> </p>
 
-
+</form>
 
 
 
@@ -45,7 +45,7 @@
         <a href="/deleteTable.html"/>Delete Tables</a>
     </p>
 
-</form>
+<button><a href="/displayAllTables">Display All Tables</a></button>
 
 </body>
 </html>

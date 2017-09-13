@@ -47,7 +47,6 @@ public class TableController {
         tableEntity = DBInteraction.getTableEntity(theTableNum);
         if (tableEntity == null) {
 
-            //TODO MUST implement a check to make sure the user inputs a number for tableNum and seatQty!
             TableEntity table1 = new TableEntity(theTableNum, theSeatQty, isItfree, byWall, byWindow, byToilet,
                     byKitchen, byWalkway, byBar, byEntrance);
 
@@ -405,10 +404,14 @@ public class TableController {
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //TODO - What if a user delete a negative int
     @RequestMapping(value = "/deleteTheTable", method = RequestMethod.POST)
     public ModelAndView deleteTableNum(@RequestParam("theTable") int theTable) {
 
+        if(DBInteraction.getTableEntity(theTable) == null){ //Check that the table exits first in the DB
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NON_EXISTANT.getDescription());
+            return model;
+        }
 
         DBInteraction.deleteTableNum(theTable);
 
@@ -422,6 +425,15 @@ public class TableController {
     @RequestMapping(value = "/deleteAllTables")
     public ModelAndView deleteAllTables() {
 
+
+        List<TableEntity> tList = DBInteraction.allTables();
+
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
+
         DBInteraction.deleteAllTables();
 
         ModelAndView model = new ModelAndView("GenericSuccess");
@@ -431,16 +443,29 @@ public class TableController {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //TODO PRINT ALL tables
-    @RequestMapping(value = "/printAllTables")
+    @RequestMapping(value = "/displayAllTables")
     public ModelAndView printAllTables() {
 
-        String toPrint = DBInteraction.getHtmlForAllTables();
+        List<TableEntity> tList = DBInteraction.allTables();
+
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
+
+        ArrayList<String> tableStatus = new ArrayList<>();
+
+        for (TableEntity t : tList) {
+            String tableNum = "Table: " + Integer.toString(t.getTableNumber()) +
+                    " - Unoccupied: " + String.valueOf(t.isFree());
+            tableStatus.add(tableNum);
+        }
 
         ModelAndView model = new ModelAndView("DisplayTables");
         model.addObject("result1", "All tables in the system");
-        model.addObject("html", toPrint);
+        model.addObject("table1", tableStatus);
         return model;
-
 
     }
 
@@ -547,8 +572,6 @@ public class TableController {
         }
         return tableSet;
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

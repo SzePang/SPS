@@ -1,3 +1,4 @@
+<%@ page import="java.util.List" %>
 <%--
   Created by IntelliJ IDEA.
   User: Sze
@@ -6,20 +7,34 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
     <title>Tables</title>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 
 </head>
 <body>
 <h1>${result1}</h1>
 
-${html}
+<ul>
+<%
+    List<String> list = null;
+    list = (List<String>)request.getAttribute("table1");
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    for(String s : list){
+%>
+
+    <li><%=s %></li>
+
+<%
+
+}
+
+%>
+</ul>
+
+<button><a href="/displayAllTables">Display All Tables</a></button>
+
 </body>
 </body>
 </html>
