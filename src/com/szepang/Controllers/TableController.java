@@ -294,6 +294,46 @@ public class TableController {
         return model;
 
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Give booking table form, allows the user to book ANY free table
+    @RequestMapping(value="/bookATable", method = RequestMethod.GET)
+    public ModelAndView bookATable() {
+
+        ModelAndView model = new ModelAndView("BookATable");
+        model.addObject("msg","Find a table");
+
+        return model;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Book a table by its table number
+    @RequestMapping(value = "/bookAnyTable", method = RequestMethod.POST)
+    public ModelAndView bookTheTable(@RequestParam("tableNumber") int theTable) {
+
+        if(theTable < 1){ //Do not allow the user to enter 0 or negative values
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.TABLE_CANNOT_BE_0.getDescription());
+            return model;
+        }
+
+        TableEntity t = DBInteraction.getTableEntity(theTable);
+        if(t == null){ //Do not allow the user to enter a table number not in DB
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NON_EXISTANT.getDescription());
+            return model;
+        }
+        if(!t.isFree()){ //check if the table is free to book
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.TABLE_FREE_FALSE.getDescription());
+            return model;
+        }
+        if(t.getTableNumber() == theTable && t.isFree()) {
+            DBInteraction.bookT(theTable);
+        }
+
+        ModelAndView model = new ModelAndView("GenericSuccess");
+        model.addObject("someResult1", "table " +theTable+ " is free!");
+        return model;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Tells the dispatcher servlet to give the form to FREE tables
@@ -312,7 +352,7 @@ public class TableController {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //FREE all tables
     @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
-    public ModelAndView freeAllTables() {
+    public ModelAndView freeAllTables() { //Sets all the tables' free field to true
 
         DBInteraction.freeAllTables();
 
@@ -323,7 +363,6 @@ public class TableController {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //FREE a single table by its table number
-    //TODO - What if a user free a negative int
     @RequestMapping(value = "/freeTheTable", method = RequestMethod.POST)
     public ModelAndView freeTableNum(@RequestParam("theTable") int theTable) {
 
@@ -344,8 +383,7 @@ public class TableController {
             model.addObject("result1", Error.TABLE_FREE_TRUE.getDescription());
             return model;
         }
-
-        if(t.getTableNumber() == theTable && !t.isFree()) { //Check that
+        if(t.getTableNumber() == theTable && !t.isFree()) {
             DBInteraction.freeTheTable(theTable);
         }
 

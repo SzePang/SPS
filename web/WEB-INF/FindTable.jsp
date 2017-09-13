@@ -35,5 +35,27 @@
 
     </form>
 
+
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/bookATable"/>Book any table</a>
+</p>
+
+<p>
+    <%--Takes the user to the ADD a table--%>
+    <a href="/addTable.html"/>Add Tables</a>
+</p>
+
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<p>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
+</p>
+
 </body>
 </html>

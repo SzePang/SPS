@@ -15,9 +15,9 @@
 
 <h1>${msg}</h1>
 
-<form action="/freeTheTable"  method="post">
+<form action="/confirmNeed/"  method="post">
 
-    <p>Table Number to FREE : <input type="number" <%--min="1" step="1"--%> value="0" name= "theTable" />
+    <p>Table Number to FREE : <input type="number" min="1" step="1" value="0" name= "theTable" />
     </p>
 
 
@@ -27,8 +27,34 @@
 </form>
 
 <p>
+    <%--Hitting this button will free all tables in the system--%>
+    This button will free all tables in the system<br>
+    <a href="/freeAllTables"/><button>FREE all Tables</button></a>
+</p>
+
+<p>
+    <%--Takes the user to the ADD a table--%>
+    <a href="/addTable.html"/>Add Tables</a>
+</p>
+
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<%--Takes the user to the function of finding a table for the customer--%>
+<p>
+    <a href="/findTable.html"/>Seat a customer</a>
+</p>
+
+<p>
     <%--Takes the user to the function of finding a table for the customer--%>
-    <a href="/freeAllTables"/>FREE all Tables</a>
+    <a href="/bookATable"/>Book any table</a>
+</p>
+
+<p>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
 </p>
 
 

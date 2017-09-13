@@ -18,8 +18,8 @@
 <a href="/bookTable.html/${result}">Book table ${result}</a>
 
 
+<%--Takes the user to the function of finding a table for the customer--%>
 <p>
-    <%--Takes the user to the function of finding a table for the customer--%>
     <a href="/findTable.html"/>Seat another customer</a>
 </p>
 
@@ -31,6 +31,16 @@
 <p>
     <%--Take the user to DELETE a table--%>
     <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/bookATable"/>Book any table</a>
+</p>
+
+<p>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
 </p>
 
 

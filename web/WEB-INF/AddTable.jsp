@@ -46,5 +46,26 @@
 
 
 
+<p>
+    <%--Take the user to DELETE a table--%>
+    <a href="/deleteTable.html"/>Delete Tables</a>
+</p>
+
+<%--Takes the user to the function of finding a table for the customer--%>
+<p>
+    <a href="/findTable.html"/>Seat a customer</a>
+</p>
+
+<p>
+    <%--Takes the user to the function of finding a table for the customer--%>
+    <a href="/bookATable"/>Book any table</a>
+</p>
+
+<p>
+    <%--Free a table--%>
+    <a href="/freeATable"/>Free tables</a>
+</p>
+
+
 </body>
 </html>
