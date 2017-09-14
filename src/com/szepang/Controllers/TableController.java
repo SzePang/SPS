@@ -88,9 +88,16 @@ public class TableController {
         //////////////////////////////////////////TEST
         System.out.println("The amount of tables in the tableList: " + tNum);
 
+        List<TableEntity> tList = DBInteraction.allTables();
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
+
         //If no table exists, DBInteraction will return 0
         if (tNum == 0) {
-            ModelAndView model = new ModelAndView("GenericNoSuccess");
+            ModelAndView model = new ModelAndView("ErrorPage");
             model.addObject("result1",
                     "Sorry, there are no available tables that can seat the amount of people in your party.");
             return model;
@@ -349,6 +356,13 @@ public class TableController {
             model.addObject("result1", Error.TABLE_CANNOT_BE_0.getDescription());
             return model;
         }
+        List<TableEntity> tList = DBInteraction.allTables();
+
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
 
         TableEntity t = DBInteraction.getTableEntity(theTable);
         if(t == null){ //Do not allow the user to enter a table number not in DB
@@ -389,6 +403,14 @@ public class TableController {
     @RequestMapping(value = "/freeAllTables", method = RequestMethod.GET)
     public ModelAndView freeAllTables() { //Sets all the tables' free field to true
 
+        List<TableEntity> tList = DBInteraction.allTables();
+
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
+
         DBInteraction.freeAllTables();
 
         ModelAndView model = new ModelAndView("GenericSuccess");
@@ -406,7 +428,13 @@ public class TableController {
             model.addObject("result1", Error.TABLE_CANNOT_BE_0.getDescription());
             return model;
         }
+        List<TableEntity> tList = DBInteraction.allTables();
 
+        if(tList.isEmpty()){
+            ModelAndView model = new ModelAndView("ErrorPage");
+            model.addObject("result1", Error.NO_TABLES_IN_DB.getDescription());
+            return model;
+        }
         TableEntity t = DBInteraction.getTableEntity(theTable);
         if(t == null){ //Do not allow the user to enter a table number not in DB
             ModelAndView model = new ModelAndView("ErrorPage");
@@ -423,7 +451,7 @@ public class TableController {
         }
 
         ModelAndView model = new ModelAndView("GenericSuccess");
-        model.addObject("someResult1", "table " +theTable+ " is free!");
+        model.addObject("someResult1", "table " +theTable+ " is now free to use!");
         return model;
     }
 
