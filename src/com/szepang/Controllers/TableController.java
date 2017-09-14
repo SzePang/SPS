@@ -118,7 +118,6 @@ public class TableController {
                     model.addObject("result2", true);
                     return model;
                 } else {
-                    //toDo difference check and add threshold so tables suitable for potential priority groups are not first chosen
                     NoPriority noPriority = new NoPriority();
                     double threshold = 0.6;
                     List<TableEntity> filteredList = new ArrayList<>();
@@ -206,6 +205,8 @@ public class TableController {
                         }
                         //Store the table number as the key and the sum as the value in a Map
                         tableMap.put(tTable.getTableNumber(), sum);
+                        //TEST check getDiff score
+                        System.out.println(tTable.getTableNumber()+ " - diffTotal: " +sum);
                     }
 
                     //get the lowest scoring table

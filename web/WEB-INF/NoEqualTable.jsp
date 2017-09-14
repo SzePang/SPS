@@ -15,7 +15,7 @@
 <h1>No equal seats for the number in your party.</h1>
 
 <h2>Search again for a larger table that will have a remainder of two seats?</h2>
-<a href="/searchAgain.html/${result1} ${result2} ">Search again</a>
+<button><a href="/searchAgain.html/${result1} ${result2} ">Search again</a></button>
 
 <p>
     <%--Takes the user to the ADD a table--%>

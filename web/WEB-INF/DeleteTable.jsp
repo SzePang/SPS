@@ -27,7 +27,7 @@
 
 <p>
     <%--deletes all tables when this is selected--%>
-    <a href="/deleteAllTables"/>delete all Tables</a>
+   <button><a href="/deleteAllTables">delete all Tables</a></button>
 </p>
 
 
